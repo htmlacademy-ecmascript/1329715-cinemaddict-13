@@ -6,4 +6,6 @@ const userRank = {
 
 const EMOTIONS = [`smile`, `sleeping`, `puke`, `angry`];
 
-export {userRank, EMOTIONS};
+const CARD_QUANTITY_EXTRA = 2;
+
+export {userRank, EMOTIONS, CARD_QUANTITY_EXTRA};

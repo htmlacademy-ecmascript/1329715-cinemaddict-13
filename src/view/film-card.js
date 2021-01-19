@@ -1,5 +1,14 @@
 import dayjs from "dayjs";
 import {humanizeFilmDuration} from "../util/view";
+import {CARD_QUANTITY_EXTRA} from "../util/const";
+
+const createFilmCardsForExtra = (films) => {
+  let template = ``;
+  for (let i = 0; i < CARD_QUANTITY_EXTRA; i++) {
+    template += createFilmCard(films[i]);
+  }
+  return template;
+};
 
 const createFilmCard = (film) => {
   const {
@@ -35,4 +44,4 @@ const createFilmCard = (film) => {
         </article>`;
 };
 
-export {createFilmCard};
+export {createFilmCard, createFilmCardsForExtra};

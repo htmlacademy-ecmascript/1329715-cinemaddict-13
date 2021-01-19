@@ -14,7 +14,6 @@ import {PlaceType, render} from "./util/view";
 import {generateFilters} from "./mock/filter";
 
 const CARD_QUANTITY = 5;
-const CARD_QUANTITY_EXTRA = 2;
 
 const header = document.querySelector(`.header`);
 const main = document.querySelector(`.main`);
@@ -42,16 +41,8 @@ for (let i = 0; i < CARD_QUANTITY; i++) {
   render(filmsContainer, createFilmCard(filmsMocks[i]), PlaceType.BEFORE_END);
 }
 render(filmsContainer, createShowMoreButtonTemplate(), PlaceType.AFTER_END);
-render(films, createTopRatedTemplate(), PlaceType.BEFORE_END);
-const topRatedContainer = films.querySelector(`.films-list--extra .films-list__container`);
-for (let i = 0; i < CARD_QUANTITY_EXTRA; i++) {
-  render(topRatedContainer, createFilmCard(filmsMocks[i]), PlaceType.BEFORE_END);
-}
-render(films, createMostCommentedTemplate(), PlaceType.BEFORE_END);
-const mostCommentedContainer = films.querySelector(`.films-list--extra:last-child .films-list__container`);
-for (let i = 0; i < CARD_QUANTITY_EXTRA; i++) {
-  render(mostCommentedContainer, createFilmCard(filmsMocks[i]), PlaceType.BEFORE_END);
-}
+render(films, createTopRatedTemplate(filmsMocks), PlaceType.BEFORE_END);
+render(films, createMostCommentedTemplate(filmsMocks), PlaceType.BEFORE_END);
 
 // render(footer, createDetailedInfoPopupTemplate(filmsMocks[0]), PlaceType.AFTER_END);
 render(footerStats, createFooterStats(filmsMocks), PlaceType.AFTER_BEGIN);
