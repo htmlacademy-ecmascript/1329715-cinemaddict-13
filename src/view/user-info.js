@@ -1,11 +1,18 @@
+import {userRank} from "../util/const";
+
 const getUserRank = (watchedQuantity) => {
+  const minNumberForNotice = 1;
+  const maxNumberForNotice = 10;
+  const minNumberForFan = 11;
+  const maxNumberForFan = 20;
+  const minNumberForMovieBuff = 21;
   let rank = ``;
-  if (watchedQuantity > 1 && watchedQuantity <= 10) {
-    rank = `novice`;
-  } else if (watchedQuantity >= 11 && watchedQuantity <= 20) {
-    rank = `fan`;
-  } else if (watchedQuantity >= 21) {
-    rank = `movie buff`;
+  if (watchedQuantity > minNumberForNotice && watchedQuantity <= maxNumberForNotice) {
+    rank = userRank.NOTICE;
+  } else if (watchedQuantity >= minNumberForFan && watchedQuantity <= maxNumberForFan) {
+    rank = userRank.FAN;
+  } else if (watchedQuantity >= minNumberForMovieBuff) {
+    rank = userRank.MOVIE_BUFF;
   }
   return rank;
 };

@@ -1,5 +1,6 @@
 import {getIdGenerator, getRandomArrayElement, getRandomIntegerNumber} from "../util/common";
 import dayjs from "dayjs";
+import {EMOTIONS} from "../util/const";
 
 const generateId = getIdGenerator();
 
@@ -10,8 +11,7 @@ const generateDate = () => {
 };
 
 const generateEmotion = () => {
-  const emotions = [`smile`, `sleeping`, `puke`, `angry`];
-  return getRandomArrayElement(emotions);
+  return getRandomArrayElement(EMOTIONS);
 };
 
 const generateComment = () => {

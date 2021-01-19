@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import {humanizeFilmDuration} from "../util/view";
 
 const createGenresTemplate = (genres) => {
   return genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(` `);
@@ -31,11 +32,7 @@ const createDetailedInfoPopupTemplate = (film) => {
   } = film;
   const commentsQuantity = comments.length;
   const genreQuantity = genre.length;
-  let runtimeFormat = `${runtime}m`;
-  const minInHour = 60;
-  if (runtime >= minInHour) {
-    runtimeFormat = `${Math.floor(runtime / minInHour)}h ${runtime % minInHour}m`;
-  }
+  const duration = humanizeFilmDuration(runtime);
 
   return `<section class="film-details">
             <form class="film-details__inner" action="" method="get">
@@ -81,7 +78,7 @@ const createDetailedInfoPopupTemplate = (film) => {
                       </tr>
                       <tr class="film-details__row">
                         <td class="film-details__term">Runtime</td>
-                        <td class="film-details__cell">${runtimeFormat}</td>
+                        <td class="film-details__cell">${duration}</td>
                       </tr>
                       <tr class="film-details__row">
                         <td class="film-details__term">Country</td>

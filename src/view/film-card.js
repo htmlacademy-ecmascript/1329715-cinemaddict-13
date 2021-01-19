@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import {humanizeFilmDuration} from "../util/view";
 
 const createFilmCard = (film) => {
   const {
@@ -13,21 +14,14 @@ const createFilmCard = (film) => {
   if (description.length > lengthForShortDescription) {
     description = `${description.slice(lengthForShortDescription - 1)}...`;
   }
-
-  let runtimeFormat = `${runtime}m`;
-  const minInHour = 60;
-  if (runtime >= minInHour) {
-    runtimeFormat = `${Math.floor(runtime / minInHour)}h ${runtime % minInHour}m`;
-  }
-
+  const duration = humanizeFilmDuration(runtime);
   const activeButtonClass = `film-card__controls-item--active`;
-
   return `<article class="film-card">
           <h3 class="film-card__title">${title}</h3>
           <p class="film-card__rating">${rating}</p>
           <p class="film-card__info">
             <span class="film-card__year">${dayjs(date).get(`year`)}</span>
-            <span class="film-card__duration">${runtimeFormat}</span>
+            <span class="film-card__duration">${duration}</span>
             <span class="film-card__genre">${genre}</span>
           </p>
           <img src="./images/posters/${poster}" alt="" class="film-card__poster">
