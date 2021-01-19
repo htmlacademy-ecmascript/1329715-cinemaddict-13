@@ -39,6 +39,13 @@ const filmListContainerElement = new FilmsContainerView().getElement();
 render(filmsList, filmListContainerElement, RENDER_POSITION.AFTER_BEGIN);
 let detailedInfoPopupView = null;
 
+const onEscKeydown = (evt) => {
+  evt.preventDefault();
+  if (evt.key === `Escape`) {
+    closePopup();
+  }
+};
+
 const renderPopup = (film) => {
   body.classList.add(`hide-overflow`);
   if (detailedInfoPopupView) {
@@ -51,6 +58,7 @@ const renderPopup = (film) => {
       evt.preventDefault();
       closePopup();
     });
+  document.addEventListener(`keydown`, onEscKeydown);
   render(footer, detailedInfoPopupElement, RENDER_POSITION.AFTER_END);
 };
 
@@ -60,6 +68,7 @@ const closePopup = () => {
     detailedInfoPopupView.destroy();
     detailedInfoPopupView = null;
   }
+  document.removeEventListener(`keydown`, onEscKeydown);
 };
 
 const renderFilm = (container, film) => {
