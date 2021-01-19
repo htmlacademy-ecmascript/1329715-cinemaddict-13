@@ -5,25 +5,15 @@ import {createFilmCard} from "./view/film-card";
 import {createUserInfoTemplate} from "./view/user-info";
 import {createSortTemplate} from "./view/sort";
 import {createShowMoreButtonTemplate} from "./view/show-more-button";
-import {createDetailedInfoPopupTemplate} from "./view/detailed-info-popup";
+// import {createDetailedInfoPopupTemplate} from "./view/detailed-info-popup";
 import {createFooterStats} from "./view/footer-stats";
 import {createTopRatedTemplate} from "./view/top-rated";
 import {createMostCommentedTemplate} from "./view/most-commented";
 import {generateFilm} from "./mock/film";
+import {PlaceType, render} from "./util/view";
 
 const CARD_QUANTITY = 5;
 const CARD_QUANTITY_EXTRA = 2;
-
-const PlaceType = {
-  BEFORE_BEGIN: `beforebegin`,
-  AFTER_BEGIN: `afterbegin`,
-  BEFORE_END: `beforeend`,
-  AFTER_END: `afterend`,
-};
-
-const render = (container, markup, place) => {
-  container.insertAdjacentHTML(place, markup);
-};
 
 const header = document.querySelector(`.header`);
 const main = document.querySelector(`.main`);
@@ -62,5 +52,5 @@ for (let i = 0; i < CARD_QUANTITY_EXTRA; i++) {
   render(mostCommentedContainer, createFilmCard(filmsMocks[i]), PlaceType.BEFORE_END);
 }
 
-render(footer, createDetailedInfoPopupTemplate(filmsMocks[0]), PlaceType.AFTER_END);
-render(footerStats, createFooterStats(), PlaceType.AFTER_BEGIN);
+// render(footer, createDetailedInfoPopupTemplate(filmsMocks[0]), PlaceType.AFTER_END);
+render(footerStats, createFooterStats(filmsMocks), PlaceType.AFTER_BEGIN);

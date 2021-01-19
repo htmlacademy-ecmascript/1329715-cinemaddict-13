@@ -1,21 +1,12 @@
-import {getIdGenerator, getMockArray, getRandomArrayElement, getRandomIntegerNumber} from "../util/util";
+import {getIdGenerator, getRandomArrayElement, getRandomIntegerNumber} from "../util/common";
 import dayjs from "dayjs";
 
 const generateId = getIdGenerator();
 
-const generateAuthor = () => {
-  const authors = getMockArray(`author`, 100);
-  return getRandomArrayElement(authors);
-};
-
-const generateFilmComment = () => {
-  const comments = getMockArray(`comment`, 100);
-  return getRandomArrayElement(comments);
-};
-
 const generateDate = () => {
-  const yearInSeconds = 31556952;
-  return dayjs().subtract(getRandomIntegerNumber(0, yearInSeconds), `second`).toDate();
+  const maxSecondsGapYear = 31556952;
+  const secondsGap = getRandomIntegerNumber(0, maxSecondsGapYear);
+  return dayjs().subtract(secondsGap, `second`).toDate();
 };
 
 const generateEmotion = () => {
@@ -26,8 +17,8 @@ const generateEmotion = () => {
 const generateComment = () => {
   return {
     "id": generateId(),
-    "author": generateAuthor(),
-    "comment": generateFilmComment(),
+    "author": `author-${getRandomIntegerNumber(0, 10)}`,
+    "comment": `comment-${getRandomIntegerNumber(0, 50)}`,
     "date": generateDate(),
     "emotion": generateEmotion()
   };

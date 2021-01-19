@@ -4,16 +4,11 @@ import {
   getRandomArrayElement,
   getRandomDoubleNumber,
   getRandomIntegerNumber
-} from "../util/util";
+} from "../util/common";
 import {generateComment} from "./comment";
 import dayjs from "dayjs";
 
 const generateId = getIdGenerator();
-
-const generateTitle = () => {
-  const titles = getMockArray(`title`, 100);
-  return getRandomArrayElement(titles);
-};
 
 const generatePoster = () => {
   const allPosters = [`made-for-each-other.png`, `popeye-meets-sinbad.png`, `sagebrush-trail.jpg`,
@@ -61,16 +56,6 @@ const generateGenres = () => {
   return Array.from(genres);
 };
 
-const generateAlternativeTitle = () => {
-  const alternativeTitles = getMockArray(`alternativeTitle`, 100);
-  return getRandomArrayElement(alternativeTitles);
-};
-
-const generateDirector = () => {
-  const directors = getMockArray(`alternativeTitle`, 100);
-  return getRandomArrayElement(directors);
-};
-
 const generateWriters = () => {
   const writerMocks = getMockArray(`writer`, 20);
   const writers = new Set();
@@ -91,29 +76,24 @@ const generateActors = () => {
   return Array.from(actors);
 };
 
-const generateCountry = () => {
-  const countries = getMockArray(`country`, 300);
-  return getRandomArrayElement(countries);
-};
-
 const generateRelease = () => {
-  const gapInYears = 50;
-  const daysGap = 365 * gapInYears;
-
+  const maxGapInYears = 50;
+  const maxDaysGap = 365 * maxGapInYears;
+  const gapInDays = getRandomIntegerNumber(0, maxDaysGap);
   return {
-    date: dayjs().subtract(getRandomIntegerNumber(0, daysGap), `day`).toDate(),
-    releaseCountry: generateCountry()
+    date: dayjs().subtract(gapInDays, `day`).toDate(),
+    releaseCountry: `country-${getRandomIntegerNumber(0, 300)}`
   };
 };
 
 const generateFilmInfo = () => {
   return {
-    title: generateTitle(),
-    alternativeTitle: generateAlternativeTitle(),
+    title: `title-${getRandomIntegerNumber(0, 100)}`,
+    alternativeTitle: `alternativeTitle-${getRandomIntegerNumber(0, 100)}`,
     rating: getRandomDoubleNumber(0, 10).toFixed(1),
     poster: generatePoster(),
     ageRating: getRandomIntegerNumber(0, 18),
-    director: generateDirector(),
+    director: `director-${getRandomIntegerNumber(0, 100)}`,
     writers: generateWriters(),
     actors: generateActors(),
     release: generateRelease(),
@@ -123,11 +103,20 @@ const generateFilmInfo = () => {
   };
 };
 
+const generateUserDetails = () => {
+  return {
+    watchlist: Boolean(getRandomIntegerNumber()),
+    alreadyWatched: Boolean(getRandomIntegerNumber()),
+    favorite: Boolean(getRandomIntegerNumber())
+  };
+};
+
 const generateFilm = () => {
   return {
     id: generateId(),
-    filmInfo: generateFilmInfo(),
     comments: generateComments(),
+    filmInfo: generateFilmInfo(),
+    userDetails: generateUserDetails()
   };
 };
 

@@ -1,5 +1,5 @@
-const createFooterStats = () => {
-  return `<p>0 movies inside</p>`;
+const createFooterStats = (films) => {
+  return `<p>${films.length} movies inside</p>`;
 };
 
 export {createFooterStats};
