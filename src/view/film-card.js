@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import {humanizeFilmDuration} from "../util/view";
 import {FILM_QUANTITY_EXTRA} from "../util/const";
+import {AbstractView} from "./abstract-view";
 
 const createFilmCardsForExtra = (films) => {
   let template = ``;
@@ -44,4 +45,14 @@ const createFilmCard = (film) => {
         </article>`;
 };
 
-export {createFilmCard, createFilmCardsForExtra};
+class FilmCard extends AbstractView {
+  constructor(film) {
+    super();
+    this._film = film;
+  }
+  getTemplate() {
+    return createFilmCard(this._film);
+  }
+}
+
+export {FilmCard, createFilmCardsForExtra};

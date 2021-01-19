@@ -1,8 +1,14 @@
-const createFilmsContainer = () => {
-  return `<h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>
+import {AbstractView} from "./abstract-view";
 
-          <div class="films-list__container">
+const createFilmsContainer = () => {
+  return `<div class="films-list__container">
           </div>`;
 };
 
-export {createFilmsContainer};
+class FilmsContainer extends AbstractView {
+  getTemplate() {
+    return createFilmsContainer();
+  }
+}
+
+export {FilmsContainer};

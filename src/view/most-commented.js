@@ -1,5 +1,6 @@
 import {createFilmCardsForExtra} from "./film-card";
 import {sort} from "../util/sort";
+import {AbstractView} from "./abstract-view";
 
 const createMostCommentedTemplate = (films) => {
   films = sort.commented(films);
@@ -12,4 +13,14 @@ const createMostCommentedTemplate = (films) => {
           </section>`;
 };
 
-export {createMostCommentedTemplate};
+class MostCommented extends AbstractView {
+  constructor(films) {
+    super();
+    this._films = films;
+  }
+  getTemplate() {
+    return createMostCommentedTemplate(this._films);
+  }
+}
+
+export {MostCommented};

@@ -1,3 +1,5 @@
+import {AbstractView} from "./abstract-view";
+
 const createFilmsSection = () => {
   return `<section class="films">
             <section class="films-list">
@@ -5,4 +7,10 @@ const createFilmsSection = () => {
           </section>`;
 };
 
-export {createFilmsSection};
+class FilmsSection extends AbstractView {
+  getTemplate() {
+    return createFilmsSection();
+  }
+}
+
+export {FilmsSection};

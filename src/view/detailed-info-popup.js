@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import {humanizeFilmDuration} from "../util/view";
+import {AbstractView} from "./abstract-view";
 
 const createGenresTemplate = (genres) => {
   return genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(` `);
@@ -153,4 +154,15 @@ const createDetailedInfoPopupTemplate = (film) => {
           </section>`;
 };
 
-export {createDetailedInfoPopupTemplate};
+class DetailedInfoPopup extends AbstractView {
+  constructor(film) {
+    super();
+    this._film = film;
+  }
+
+  getTemplate() {
+    return createDetailedInfoPopupTemplate(this._film);
+  }
+}
+
+export {DetailedInfoPopup};

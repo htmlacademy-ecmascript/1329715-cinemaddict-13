@@ -1,5 +1,6 @@
 import {createFilmCardsForExtra} from "./film-card";
 import {sort} from "../util/sort";
+import {AbstractView} from "./abstract-view";
 
 const createTopRatedTemplate = (films) => {
   films = sort.rated(films);
@@ -12,4 +13,14 @@ const createTopRatedTemplate = (films) => {
           </section>`;
 };
 
-export {createTopRatedTemplate};
+class TopRated extends AbstractView {
+  constructor(films) {
+    super();
+    this._films = films;
+  }
+  getTemplate() {
+    return createTopRatedTemplate(this._films);
+  }
+}
+
+export {TopRated};

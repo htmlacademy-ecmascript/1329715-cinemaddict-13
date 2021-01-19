@@ -1,12 +1,21 @@
 const PlaceType = {
-  BEFORE_BEGIN: `beforebegin`,
   AFTER_BEGIN: `afterbegin`,
   BEFORE_END: `beforeend`,
   AFTER_END: `afterend`,
 };
 
-const render = (container, markup, place) => {
-  container.insertAdjacentHTML(place, markup);
+const render = (container, domElement, place) => {
+  switch (place) {
+    case PlaceType.AFTER_BEGIN:
+      container.prepend(domElement);
+      break;
+    case PlaceType.BEFORE_END:
+      container.append(domElement);
+      break;
+    case PlaceType.AFTER_END:
+      container.parentNode.insertBefore(domElement, container.nextSibling);
+      break;
+  }
 };
 
 const humanizeFilmDuration = (durationInMinutes) => {
@@ -18,4 +27,10 @@ const humanizeFilmDuration = (durationInMinutes) => {
   return humanizedFormat;
 };
 
-export {PlaceType, render, humanizeFilmDuration};
+const createElement = (markup) => {
+  const parentElement = document.createElement(`div`);
+  parentElement.innerHTML = markup;
+  return parentElement.firstChild;
+};
+
+export {PlaceType, render, humanizeFilmDuration, createElement};

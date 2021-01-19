@@ -1,4 +1,5 @@
 import {userRank} from "../util/const";
+import {AbstractView} from "./abstract-view";
 
 const getUserRank = (watchedQuantity) => {
   const minNumberForNotice = 1;
@@ -29,4 +30,15 @@ const createUserInfoTemplate = (films) => {
           </section>`;
 };
 
-export {createUserInfoTemplate};
+class UserInfo extends AbstractView {
+  constructor(films) {
+    super();
+    this._films = films;
+  }
+
+  getTemplate() {
+    return createUserInfoTemplate(this._films);
+  }
+}
+
+export {UserInfo};
