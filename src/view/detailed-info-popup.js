@@ -22,14 +22,15 @@ const createCommentsTemplate = (comments) => {
 
 const createDetailedInfoPopupTemplate = (film) => {
   const {
+    comments,
     filmInfo: {
       poster, title, alternativeTitle, rating, director, writers, actors, release: {date, releaseCountry},
       runtime, genre, description, ageRating
-    }, comments
+    },
+    userDetails: {watchlist, alreadyWatched, favorite}
   } = film;
   const commentsQuantity = comments.length;
   const genreQuantity = genre.length;
-
   let runtimeFormat = `${runtime}m`;
   const minInHour = 60;
   if (runtime >= minInHour) {
@@ -101,13 +102,13 @@ const createDetailedInfoPopupTemplate = (film) => {
                 </div>
 
                 <section class="film-details__controls">
-                  <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
+                  <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${watchlist ? `checked` : ``}>
                   <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
 
-                  <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched">
+                  <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${alreadyWatched ? `checked` : ``}>
                   <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
 
-                  <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite">
+                  <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${favorite ? `checked` : ``}>
                   <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
                 </section>
               </div>
