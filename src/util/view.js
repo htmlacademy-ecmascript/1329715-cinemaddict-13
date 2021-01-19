@@ -1,4 +1,4 @@
-const PlaceType = {
+const RENDER_POSITION = {
   AFTER_BEGIN: `afterbegin`,
   BEFORE_END: `beforeend`,
   AFTER_END: `afterend`,
@@ -6,13 +6,13 @@ const PlaceType = {
 
 const render = (container, domElement, place) => {
   switch (place) {
-    case PlaceType.AFTER_BEGIN:
+    case RENDER_POSITION.AFTER_BEGIN:
       container.prepend(domElement);
       break;
-    case PlaceType.BEFORE_END:
+    case RENDER_POSITION.BEFORE_END:
       container.append(domElement);
       break;
-    case PlaceType.AFTER_END:
+    case RENDER_POSITION.AFTER_END:
       container.parentNode.insertBefore(domElement, container.nextSibling);
       break;
   }
@@ -33,4 +33,4 @@ const createElement = (markup) => {
   return parentElement.firstChild;
 };
 
-export {PlaceType, render, humanizeFilmDuration, createElement};
+export {RENDER_POSITION, render, humanizeFilmDuration, createElement};
