@@ -11,6 +11,7 @@ import {createTopRatedTemplate} from "./view/top-rated";
 import {createMostCommentedTemplate} from "./view/most-commented";
 import {generateFilm} from "./mock/film";
 import {PlaceType, render} from "./util/view";
+import {generateFilters} from "./mock/filter";
 
 const CARD_QUANTITY = 5;
 const CARD_QUANTITY_EXTRA = 2;
@@ -27,7 +28,7 @@ for (let i = 0; i < 25; i++) {
 
 render(header, createUserInfoTemplate(filmsMocks), PlaceType.BEFORE_END);
 
-render(main, createMenuTemplate(), PlaceType.AFTER_BEGIN);
+render(main, createMenuTemplate(generateFilters(filmsMocks)), PlaceType.AFTER_BEGIN);
 render(main, createSortTemplate(), PlaceType.BEFORE_END);
 
 render(main, createFilmsSection(), PlaceType.BEFORE_END);

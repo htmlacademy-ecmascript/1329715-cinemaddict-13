@@ -27,4 +27,11 @@ const getRandomDoubleNumber = (min = 0, max = 1) => {
   return Math.random() * (max - min) + min;
 };
 
-export {getIdGenerator, getRandomArrayElement, getMockArray, getRandomIntegerNumber, getRandomDoubleNumber};
+const capitalizeString = (str) => {
+  return `${str.charAt(0).toUpperCase()}${str.substring(1)}`;
+};
+
+export {
+  getIdGenerator, getRandomArrayElement, getMockArray, getRandomIntegerNumber, getRandomDoubleNumber,
+  capitalizeString
+};
