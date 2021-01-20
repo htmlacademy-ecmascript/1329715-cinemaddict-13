@@ -158,10 +158,22 @@ class DetailedInfoPopup extends AbstractView {
   constructor(film) {
     super();
     this._film = film;
+
+    this._clickCloseButtonHandler = this._clickCloseButtonHandler.bind(this);
   }
 
   getTemplate() {
     return createDetailedInfoPopupTemplate(this._film);
+  }
+
+  _clickCloseButtonHandler(evt) {
+    evt.preventDefault();
+    this._callback.clickCloseButton();
+  }
+
+  setClickCloseButtonHandler(cb) {
+    this._callback.clickCloseButton = cb;
+    this.element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._clickCloseButtonHandler);
   }
 }
 

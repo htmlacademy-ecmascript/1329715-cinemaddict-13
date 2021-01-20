@@ -2,10 +2,14 @@ import {createElement} from "../util/view";
 
 class AbstractView {
   constructor() {
+    if (new.target === AbstractView) {
+      throw new Error(`Abstract class can be created.`);
+    }
     this._element = null;
+    this._callback = {};
   }
 
-  getElement() {
+  get element() {
     if (!this._element) {
       this._element = createElement(this.getTemplate());
     }
