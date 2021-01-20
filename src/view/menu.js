@@ -2,7 +2,8 @@ import {capitalizeString} from "../util/common";
 import {AbstractView} from "./abstract-view";
 
 const createFilterTemplate = (filters) => {
-  let filterTemplate = `<a href="#all" class="main-navigation__item main-navigation__item--active">All movies</a>`;
+  const filmsAbsence = filters[0].quantity === 0;
+  let filterTemplate = filmsAbsence ? `` : `<a href="#all" class="main-navigation__item main-navigation__item--active">All movies</a>`;
   for (let i = 1; i < filters.length; i++) {
     const {name, quantity} = filters[i];
     filterTemplate += `<a href="#${name}watchlist" class="main-navigation__item">${capitalizeString(name)} <span class="main-navigation__item-count">${quantity}</span></a>`;
