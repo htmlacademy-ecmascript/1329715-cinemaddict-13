@@ -28,6 +28,16 @@ class FilmList {
     this._onEscKeydown = this._onEscKeydown.bind(this);
     this._clickShowMoreButtonHandler = this._clickShowMoreButtonHandler.bind(this);
     this._openPopup = this._openPopup.bind(this);
+
+    this._filmPresenters = new Map();
+
+    this._handleChangeFilm = this._handleChangeFilm.bind(this);
+  }
+
+  _handleChangeFilm(updatedFilm) {
+    this._filmPresenters.get(updatedFilm.id).update(updatedFilm);
+    const index = this._films.findIndex((film) => film.id === updatedFilm.id);
+    this._films[index] = updatedFilm;
   }
 
   init(films) {
@@ -53,6 +63,11 @@ class FilmList {
       this._renderMostCommentedFilms();
     }
     this._renderFooterStats();
+  }
+
+  _clearBoard() {
+    this._filmPresenters.clear();
+    this._main.innerHTML = ``;
   }
 
   _renderMenuView() {
@@ -86,7 +101,9 @@ class FilmList {
   }
 
   _renderFilm(container, film) {
-    new FilmPresenter(container, this._openPopup).init(film);
+    const filmPresenter = new FilmPresenter(container, this._openPopup, this._handleChangeFilm);
+    filmPresenter.init(film);
+    this._filmPresenters.set(film.id, filmPresenter);
   }
 
   _renderFilms(from, to) {

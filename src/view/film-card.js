@@ -50,6 +50,7 @@ class FilmCard extends AbstractView {
     super();
     this._film = film;
     this._openPopupHandler = this._openPopupHandler.bind(this);
+    this._clickWatchlistHandler = this._clickWatchlistHandler.bind(this);
   }
 
   getTemplate() {
@@ -66,6 +67,16 @@ class FilmCard extends AbstractView {
     this.element.querySelector(`.film-card__poster`).addEventListener(`click`, this._openPopupHandler);
     this.element.querySelector(`.film-card__title`).addEventListener(`click`, this._openPopupHandler);
     this.element.querySelector(`.film-card__comments`).addEventListener(`click`, this._openPopupHandler);
+  }
+
+  _clickWatchlistHandler(evt) {
+    evt.preventDefault();
+    this._callback.clickWatchlist();
+  }
+
+  setClickWatchlistHandler(cb) {
+    this._callback.clickWatchlist = cb;
+    this.element.querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, this._clickWatchlistHandler);
   }
 }
 
