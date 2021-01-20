@@ -58,7 +58,7 @@ class FilmCard extends AbstractView {
 
   _openPopupHandler(evt) {
     evt.preventDefault();
-    this._callback.openPopupHandler();
+    this._callback.openPopupHandler(this._film);
   }
 
   setOpenPopupHandler(cb) {
