@@ -1,4 +1,4 @@
-import {userRank} from "../util/const";
+import {UserRank} from "../util/const";
 import {AbstractView} from "./abstract-view";
 
 const getUserRank = (watchedQuantity) => {
@@ -9,11 +9,11 @@ const getUserRank = (watchedQuantity) => {
   const minNumberForMovieBuff = 21;
   let rank = ``;
   if (watchedQuantity > minNumberForNotice && watchedQuantity <= maxNumberForNotice) {
-    rank = userRank.NOTICE;
+    rank = UserRank.NOTICE;
   } else if (watchedQuantity >= minNumberForFan && watchedQuantity <= maxNumberForFan) {
-    rank = userRank.FAN;
+    rank = UserRank.FAN;
   } else if (watchedQuantity >= minNumberForMovieBuff) {
-    rank = userRank.MOVIE_BUFF;
+    rank = UserRank.MOVIE_BUFF;
   }
   return rank;
 };

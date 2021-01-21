@@ -1,6 +1,6 @@
 import {FilmCard as FilmCardView} from "../view/film-card";
 import {render, RENDER_POSITION, replace} from "../util/view";
-import {butonTypes} from "../util/const";
+import {ButtonType} from "../util/const";
 
 class Film {
   constructor(container, openPopupHandler, handleChangeFilm) {
@@ -31,21 +31,21 @@ class Film {
   }
 
   _handleClickWatchlist() {
-    this._filmCardView.toggleButton(butonTypes.WATCHLIST);
+    this._filmCardView.toggleButton(ButtonType.WATCHLIST);
     const newFilm = Object.assign({}, this._film);
     newFilm.userDetails.watchlist = !this._film.userDetails.watchlist;
     this._handleChangeFilm(newFilm, false);
   }
 
   _handleClickWatched() {
-    this._filmCardView.toggleButton(butonTypes.WATCHED);
+    this._filmCardView.toggleButton(ButtonType.WATCHED);
     const newFilm = Object.assign({}, this._film);
     newFilm.userDetails.alreadyWatched = !this._film.userDetails.alreadyWatched;
     this._handleChangeFilm(newFilm, false);
   }
 
   _handleClickFavorite() {
-    this._filmCardView.toggleButton(butonTypes.FAVORITE);
+    this._filmCardView.toggleButton(ButtonType.FAVORITE);
     const newFilm = Object.assign({}, this._film);
     newFilm.userDetails.favorite = !this._film.userDetails.favorite;
     this._handleChangeFilm(newFilm, false);

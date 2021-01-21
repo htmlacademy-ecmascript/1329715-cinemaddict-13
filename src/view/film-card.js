@@ -1,15 +1,7 @@
 import dayjs from "dayjs";
 import {humanizeFilmDuration} from "../util/view";
-import {butonTypes, FILM_QUANTITY_EXTRA} from "../util/const";
+import {ButtonType} from "../util/const";
 import {AbstractView} from "./abstract-view";
-
-const createFilmCardsForExtra = (films) => {
-  let template = ``;
-  for (let i = 0; i < FILM_QUANTITY_EXTRA; i++) {
-    template += createFilmCard(films[i]);
-  }
-  return template;
-};
 
 const createFilmCard = (film) => {
   const {
@@ -74,13 +66,13 @@ class FilmCard extends AbstractView {
   toggleButton(type) {
     let selector = ``;
     switch (type) {
-      case butonTypes.WATCHLIST:
+      case ButtonType.WATCHLIST:
         selector = `.film-card__controls-item--add-to-watchlist`;
         break;
-      case butonTypes.WATCHED:
+      case ButtonType.WATCHED:
         selector = `.film-card__controls-item--mark-as-watched`;
         break;
-      case butonTypes.FAVORITE:
+      case ButtonType.FAVORITE:
         selector = `.film-card__controls-item--favorite`;
         break;
     }
@@ -118,4 +110,4 @@ class FilmCard extends AbstractView {
   }
 }
 
-export {FilmCard, createFilmCardsForExtra};
+export {FilmCard};

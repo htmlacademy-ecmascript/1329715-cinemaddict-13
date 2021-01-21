@@ -21,8 +21,10 @@ class AbstractView {
   }
 
   destroy() {
-    this._element.remove();
-    this.removeElement();
+    if (this._element) {
+      this._element.remove();
+      this.removeElement();
+    }
   }
 
   getTemplate() {

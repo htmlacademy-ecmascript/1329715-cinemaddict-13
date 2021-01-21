@@ -1,4 +1,4 @@
-const userRank = {
+const UserRank = {
   NOTICE: `notice`,
   FAN: `fan`,
   MOVIE_BUFF: `movie buff`
@@ -10,10 +10,10 @@ const FILM_QUANTITY_EXTRA = 2;
 const FILM_QUANTITY = 12;
 const FILM_QUANTITY_PER_STEP = 5;
 
-const butonTypes = {
+const ButtonType = {
   WATCHLIST: `watchlist`,
   WATCHED: `watched`,
   FAVORITE: `favorite`
 };
 
-export {userRank, EMOTIONS, FILM_QUANTITY_EXTRA, FILM_QUANTITY, FILM_QUANTITY_PER_STEP, butonTypes};
+export {UserRank, EMOTIONS, FILM_QUANTITY_EXTRA, FILM_QUANTITY, FILM_QUANTITY_PER_STEP, ButtonType};

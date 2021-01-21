@@ -4,7 +4,7 @@ import {DetailedInfoPopup as DetailedInfoPopupView} from "../view/detailed-info-
 import {FILM_QUANTITY_EXTRA, FILM_QUANTITY_PER_STEP} from "../util/const";
 import {ShowMoreButton as ShowMoreButtonView} from "../view/show-more-button";
 import {TopRated as TopRatedView} from "../view/top-rated";
-import {sort} from "../util/sort";
+import {sort, SortType} from "../util/sort";
 import {MostCommented as MostCommentedView} from "../view/most-commented";
 import {ListEmpty} from "../view/list-empty";
 import {UserInfo as UserInfoView} from "../view/user-info";
@@ -22,6 +22,7 @@ class FilmList {
     this._main = body.querySelector(`.main`);
     this._footer = body.querySelector(`.footer`);
     this._footerStats = this._footer.querySelector(`.footer__statistics`);
+    this._currentSortType = SortType.DEFAULT;
 
     this._closePopup = this._closePopup.bind(this);
     this._onEscKeydown = this._onEscKeydown.bind(this);
@@ -31,6 +32,24 @@ class FilmList {
     this._filmPresenters = new Map();
 
     this._handleChangeFilm = this._handleChangeFilm.bind(this);
+    this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+  }
+
+  _handleSortTypeChange(sortType) {
+    if (this._currentSortType !== sortType) {
+      this._sortFilms(sortType);
+      this._clearFilmList();
+      this._renderFilmList();
+    }
+  }
+
+  _sortFilms(sortType) {
+    this._currentSortType = sortType;
+    if (sortType === sortType.DEFAULT) {
+      this._films = this._sourcedFilms;
+    } else {
+      this._films = sort[sortType](this._films);
+    }
   }
 
   _handleChangeFilm(updatedFilm, isReload) {
@@ -40,8 +59,8 @@ class FilmList {
   }
 
   init(films) {
-    this._films = films;
-    this._shownFilmCardQuantity = FILM_QUANTITY_PER_STEP;
+    this._films = films.slice();
+    this._sourcedFilms = films.slice();
 
     this.renderBoard();
   }
@@ -55,18 +74,24 @@ class FilmList {
     } else {
       this._renderUserInfo();
       this._renderSort();
-      this._renderFilmContainer();
-      this._renderFilms(0, Math.min(this._films.length, FILM_QUANTITY_PER_STEP));
-      this._renderShowMoreButton();
+      this._renderFilmList();
       this._renderTopRatedFilms();
       this._renderMostCommentedFilms();
     }
     this._renderFooterStats();
   }
 
-  _clearBoard() {
+  _renderFilmList() {
+    this._shownFilmCardQuantity = FILM_QUANTITY_PER_STEP;
+    this._renderFilmContainer();
+    this._renderFilms(0, Math.min(this._films.length, FILM_QUANTITY_PER_STEP));
+    this._renderShowMoreButton();
+  }
+
+  _clearFilmList() {
     this._filmPresenters.clear();
-    this._main.innerHTML = ``;
+    this._filmContainerView.destroy();
+    this._showMoreButtonView.destroy();
   }
 
   _renderMenuView() {
@@ -92,6 +117,7 @@ class FilmList {
   _renderSort() {
     this._sortView = new SortView();
     render(this._menuView, this._sortView, RENDER_POSITION.AFTER_END);
+    this._sortView.setClickSortHandler(this._handleSortTypeChange);
   }
 
   _renderFilmContainer() {
@@ -130,7 +156,7 @@ class FilmList {
     const topRatedViewElement = new TopRatedView().element;
     render(this._filmSectionView, topRatedViewElement, RENDER_POSITION.BEFORE_END);
     const topRatedContainer = topRatedViewElement.querySelector(`.films-list__container`);
-    const sortByRateFilms = sort.rated(this._films);
+    const sortByRateFilms = sort[SortType.RATED](this._films);
     const rateQuantity = Math.min(FILM_QUANTITY_EXTRA, sortByRateFilms.length);
     for (let i = 0; i < rateQuantity; i++) {
       this._renderFilm(topRatedContainer, sortByRateFilms[i]);
@@ -141,7 +167,7 @@ class FilmList {
     const mostCommentedViewElement = new MostCommentedView().element;
     render(this._filmSectionView, mostCommentedViewElement, RENDER_POSITION.BEFORE_END);
     const mostCommentedContainer = mostCommentedViewElement.querySelector(`.films-list__container`);
-    const sortByCommentedFilms = sort.commented(this._films);
+    const sortByCommentedFilms = sort[SortType.COMMENTED](this._films);
     const commentedQuantity = Math.min(FILM_QUANTITY_EXTRA, sortByCommentedFilms.length);
     for (let i = 0; i < commentedQuantity; i++) {
       this._renderFilm(mostCommentedContainer, sortByCommentedFilms[i]);
