@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import {humanizeFilmDuration} from "../util/view";
-import {FILM_QUANTITY_EXTRA} from "../util/const";
+import {butonTypes, FILM_QUANTITY_EXTRA} from "../util/const";
 import {AbstractView} from "./abstract-view";
 
 const createFilmCardsForExtra = (films) => {
@@ -51,6 +51,8 @@ class FilmCard extends AbstractView {
     this._film = film;
     this._openPopupHandler = this._openPopupHandler.bind(this);
     this._clickWatchlistHandler = this._clickWatchlistHandler.bind(this);
+    this._clickWatchedHandler = this._clickWatchedHandler.bind(this);
+    this._clickFavoriteHandler = this._clickFavoriteHandler.bind(this);
   }
 
   getTemplate() {
@@ -69,6 +71,22 @@ class FilmCard extends AbstractView {
     this.element.querySelector(`.film-card__comments`).addEventListener(`click`, this._openPopupHandler);
   }
 
+  toggleButton(type) {
+    let selector = ``;
+    switch (type) {
+      case butonTypes.WATCHLIST:
+        selector = `.film-card__controls-item--add-to-watchlist`;
+        break;
+      case butonTypes.WATCHED:
+        selector = `.film-card__controls-item--mark-as-watched`;
+        break;
+      case butonTypes.FAVORITE:
+        selector = `.film-card__controls-item--favorite`;
+        break;
+    }
+    this.element.querySelector(selector).classList.toggle(`film-card__controls-item--active`);
+  }
+
   _clickWatchlistHandler(evt) {
     evt.preventDefault();
     this._callback.clickWatchlist();
@@ -77,6 +95,26 @@ class FilmCard extends AbstractView {
   setClickWatchlistHandler(cb) {
     this._callback.clickWatchlist = cb;
     this.element.querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, this._clickWatchlistHandler);
+  }
+
+  _clickWatchedHandler(evt) {
+    evt.preventDefault();
+    this._callback.clickWatched();
+  }
+
+  setClickWatchedHandler(cb) {
+    this._callback.clickWatched = cb;
+    this.element.querySelector(`.film-card__controls-item--mark-as-watched`).addEventListener(`click`, this._clickWatchedHandler);
+  }
+
+  _clickFavoriteHandler(evt) {
+    evt.preventDefault();
+    this._callback.clickFavorite();
+  }
+
+  setClickFavoriteHandler(cb) {
+    this._callback.clickFavorite = cb;
+    this.element.querySelector(`.film-card__controls-item--favorite`).addEventListener(`click`, this._clickFavoriteHandler);
   }
 }
 

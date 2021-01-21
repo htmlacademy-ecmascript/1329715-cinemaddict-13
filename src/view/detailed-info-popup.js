@@ -155,15 +155,21 @@ const createDetailedInfoPopupTemplate = (film) => {
 };
 
 class DetailedInfoPopup extends AbstractView {
-  constructor(film) {
+  constructor(film, closePopup, handleChangeFilm) {
     super();
     this._film = film;
 
+    this._closePopup = closePopup;
+    this._handleChangeFilm = handleChangeFilm;
+
     this._clickCloseButtonHandler = this._clickCloseButtonHandler.bind(this);
+    this._handleClickWatchlist = this._handleClickWatchlist.bind(this);
+    this._handleClickWatched = this._handleClickWatched.bind(this);
+    this._handleClickFavorite = this._handleClickFavorite.bind(this);
   }
 
-  getTemplate() {
-    return createDetailedInfoPopupTemplate(this._film);
+  init() {
+    this.setHandlers();
   }
 
   _clickCloseButtonHandler(evt) {
@@ -171,9 +177,50 @@ class DetailedInfoPopup extends AbstractView {
     this._callback.clickCloseButton();
   }
 
-  setClickCloseButtonHandler(cb) {
+  _setClickCloseButtonHandler(cb) {
     this._callback.clickCloseButton = cb;
     this.element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._clickCloseButtonHandler);
+  }
+
+  _handleClickWatchlist() {
+    const newFilm = Object.assign({}, this._film);
+    newFilm.userDetails.watchlist = !this._film.userDetails.watchlist;
+    this._handleChangeFilm(newFilm, true);
+  }
+
+  _setClickWatchlistHandler() {
+    this.element.querySelector(`.film-details__control-label--watchlist`).addEventListener(`click`, this._handleClickWatchlist);
+  }
+
+  _handleClickWatched() {
+    const newFilm = Object.assign({}, this._film);
+    newFilm.userDetails.alreadyWatched = !this._film.userDetails.alreadyWatched;
+    this._handleChangeFilm(newFilm, true);
+  }
+
+  _setClickWatchedHandler() {
+    this.element.querySelector(`.film-details__control-label--watched`).addEventListener(`click`, this._handleClickWatched);
+  }
+
+  _handleClickFavorite() {
+    const newFilm = Object.assign({}, this._film);
+    newFilm.userDetails.favorite = !this._film.userDetails.favorite;
+    this._handleChangeFilm(newFilm, true);
+  }
+
+  _setClickFavoriteHandler() {
+    this.element.querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, this._handleClickFavorite);
+  }
+
+  setHandlers() {
+    this._setClickCloseButtonHandler(this._closePopup);
+    this._setClickWatchlistHandler();
+    this._setClickWatchedHandler();
+    this._setClickFavoriteHandler();
+  }
+
+  getTemplate() {
+    return createDetailedInfoPopupTemplate(this._film);
   }
 }
 

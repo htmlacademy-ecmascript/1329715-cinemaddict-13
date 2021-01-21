@@ -1,7 +1,6 @@
 import {render, RENDER_POSITION} from "../util/view";
 import {FilmsContainer as FilmsContainerView} from "../view/films-container";
 import {DetailedInfoPopup as DetailedInfoPopupView} from "../view/detailed-info-popup";
-import {FilmCard as FilmCardView} from "../view/film-card";
 import {FILM_QUANTITY_EXTRA, FILM_QUANTITY_PER_STEP} from "../util/const";
 import {ShowMoreButton as ShowMoreButtonView} from "../view/show-more-button";
 import {TopRated as TopRatedView} from "../view/top-rated";
@@ -34,8 +33,8 @@ class FilmList {
     this._handleChangeFilm = this._handleChangeFilm.bind(this);
   }
 
-  _handleChangeFilm(updatedFilm) {
-    this._filmPresenters.get(updatedFilm.id).update(updatedFilm);
+  _handleChangeFilm(updatedFilm, isReload) {
+    this._filmPresenters.get(updatedFilm.id).update(updatedFilm, isReload);
     const index = this._films.findIndex((film) => film.id === updatedFilm.id);
     this._films[index] = updatedFilm;
   }
@@ -159,6 +158,7 @@ class FilmList {
     if (this._detailedInfoPopupView) {
       this._detailedInfoPopupView.destroy();
       this._detailedInfoPopupView = null;
+      this._openPopupFilmId = null;
     }
     document.removeEventListener(`keydown`, this._onEscKeydown);
   }
@@ -175,10 +175,12 @@ class FilmList {
     if (this._detailedInfoPopupView) {
       this._detailedInfoPopupView.destroy();
     }
-    this._detailedInfoPopupView = new DetailedInfoPopupView(film);
-    this._detailedInfoPopupView.setClickCloseButtonHandler(this._closePopup);
+    this._openPopupFilmId = film.id;
+    this._detailedInfoPopupView = new DetailedInfoPopupView(film, this._closePopup, this._handleChangeFilm);
     document.addEventListener(`keydown`, this._onEscKeydown);
+
     render(this._footer, this._detailedInfoPopupView, RENDER_POSITION.AFTER_END);
+    this._detailedInfoPopupView.init();
   }
 }
 

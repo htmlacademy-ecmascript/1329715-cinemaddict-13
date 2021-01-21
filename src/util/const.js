@@ -10,4 +10,10 @@ const FILM_QUANTITY_EXTRA = 2;
 const FILM_QUANTITY = 12;
 const FILM_QUANTITY_PER_STEP = 5;
 
-export {userRank, EMOTIONS, FILM_QUANTITY_EXTRA, FILM_QUANTITY, FILM_QUANTITY_PER_STEP};
+const butonTypes = {
+  WATCHLIST: `watchlist`,
+  WATCHED: `watched`,
+  FAVORITE: `favorite`
+};
+
+export {userRank, EMOTIONS, FILM_QUANTITY_EXTRA, FILM_QUANTITY, FILM_QUANTITY_PER_STEP, butonTypes};
