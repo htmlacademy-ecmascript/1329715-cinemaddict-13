@@ -91,7 +91,8 @@ const createDetailedInfoPopupTemplate = (film) => {
                             ${createGenresTemplate(genre)}
                         </td>
                       </tr>
-                    </tbody></table>
+                      </tbody>
+                    </table>
 
                     <p class="film-details__film-description">
                         ${description}

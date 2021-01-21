@@ -190,8 +190,8 @@ class FilmList {
   }
 
   _onEscKeydown(evt) {
-    evt.preventDefault();
     if (evt.key === `Escape`) {
+      evt.preventDefault();
       this._closePopup();
     }
   }
