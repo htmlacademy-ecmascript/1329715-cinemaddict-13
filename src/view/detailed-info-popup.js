@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import {humanizeFilmDuration} from "../util/view";
-import {AbstractView} from "./abstract-view";
+import {Smart as SmartView} from "./smart";
+import {deepCopyFilm} from "../util/common";
 
 const createGenresTemplate = (genres) => {
   return genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(` `);
@@ -94,7 +95,7 @@ const createDetailedInfoPopupTemplate = (film) => {
                       </tbody>
                     </table>
 
-                    <p class="film-details__film-description">
+                    <p class="film-details__state-description">
                         ${description}
                     </p>
                   </div>
@@ -155,10 +156,9 @@ const createDetailedInfoPopupTemplate = (film) => {
           </section>`;
 };
 
-class DetailedInfoPopup extends AbstractView {
+class DetailedInfoPopup extends SmartView {
   constructor(film, closePopup, handleChangeFilm) {
-    super();
-    this._film = film;
+    super(film);
 
     this._closePopup = closePopup;
     this._handleChangeFilm = handleChangeFilm;
@@ -184,16 +184,9 @@ class DetailedInfoPopup extends AbstractView {
   }
 
   _handleClickWatchlist() {
-    const newFilm = this._deepCopyFilm();
-    newFilm.userDetails.watchlist = !this._film.userDetails.watchlist;
-    this._handleChangeFilm(newFilm, true);
-  }
-
-  _deepCopyFilm() {
-    const newFilm = Object.assign({}, this._film);
-    newFilm.userDetails = Object.assign({}, this._film.userDetails);
-    newFilm.filmInfo = Object.assign({}, this._film.filmInfo);
-    return newFilm;
+    const newFilm = deepCopyFilm(this._state);
+    newFilm.userDetails.watchlist = !this._state.userDetails.watchlist;
+    this._handleChangeFilm(newFilm, true, false);
   }
 
   _setClickWatchlistHandler() {
@@ -201,9 +194,9 @@ class DetailedInfoPopup extends AbstractView {
   }
 
   _handleClickWatched() {
-    const newFilm = this._deepCopyFilm();
-    newFilm.userDetails.alreadyWatched = !this._film.userDetails.alreadyWatched;
-    this._handleChangeFilm(newFilm, true);
+    const newFilm = deepCopyFilm(this._state);
+    newFilm.userDetails.alreadyWatched = !this._state.userDetails.alreadyWatched;
+    this._handleChangeFilm(newFilm, true, false);
   }
 
   _setClickWatchedHandler() {
@@ -211,9 +204,9 @@ class DetailedInfoPopup extends AbstractView {
   }
 
   _handleClickFavorite() {
-    const newFilm = this._deepCopyFilm();
-    newFilm.userDetails.favorite = !this._film.userDetails.favorite;
-    this._handleChangeFilm(newFilm, true);
+    const newFilm = deepCopyFilm(this._state);
+    newFilm.userDetails.favorite = !this._state.userDetails.favorite;
+    this._handleChangeFilm(newFilm, true, false);
   }
 
   _setClickFavoriteHandler() {
@@ -228,11 +221,11 @@ class DetailedInfoPopup extends AbstractView {
   }
 
   getTemplate() {
-    return createDetailedInfoPopupTemplate(this._film);
+    return createDetailedInfoPopupTemplate(this._state);
   }
 
-  update(newFilm, isReload) {
-    this._film = newFilm;
+  restoreHandlers() {
+    this.setHandlers();
   }
 }
 

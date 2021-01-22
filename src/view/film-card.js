@@ -1,7 +1,6 @@
 import dayjs from "dayjs";
 import {humanizeFilmDuration} from "../util/view";
-import {ButtonType} from "../util/const";
-import {AbstractView} from "./abstract-view";
+import {Smart as SmartView} from "./smart";
 
 const createFilmCard = (film) => {
   const {
@@ -37,10 +36,9 @@ const createFilmCard = (film) => {
         </article>`;
 };
 
-class FilmCard extends AbstractView {
+class FilmCard extends SmartView {
   constructor(film) {
-    super();
-    this._film = film;
+    super(film);
     this._openPopupHandler = this._openPopupHandler.bind(this);
     this._clickWatchlistHandler = this._clickWatchlistHandler.bind(this);
     this._clickWatchedHandler = this._clickWatchedHandler.bind(this);
@@ -48,12 +46,12 @@ class FilmCard extends AbstractView {
   }
 
   getTemplate() {
-    return createFilmCard(this._film);
+    return createFilmCard(this._state);
   }
 
   _openPopupHandler(evt) {
     evt.preventDefault();
-    this._callback.openPopupHandler(this._film);
+    this._callback.openPopupHandler(this._state);
   }
 
   setOpenPopupHandler(cb) {
@@ -61,22 +59,6 @@ class FilmCard extends AbstractView {
     this.element.querySelector(`.film-card__poster`).addEventListener(`click`, this._openPopupHandler);
     this.element.querySelector(`.film-card__title`).addEventListener(`click`, this._openPopupHandler);
     this.element.querySelector(`.film-card__comments`).addEventListener(`click`, this._openPopupHandler);
-  }
-
-  toggleButton(type) {
-    let selector = ``;
-    switch (type) {
-      case ButtonType.WATCHLIST:
-        selector = `.film-card__controls-item--add-to-watchlist`;
-        break;
-      case ButtonType.WATCHED:
-        selector = `.film-card__controls-item--mark-as-watched`;
-        break;
-      case ButtonType.FAVORITE:
-        selector = `.film-card__controls-item--favorite`;
-        break;
-    }
-    this.element.querySelector(selector).classList.toggle(`film-card__controls-item--active`);
   }
 
   _clickWatchlistHandler(evt) {
@@ -106,6 +88,15 @@ class FilmCard extends AbstractView {
 
   setClickFavoriteHandler(cb) {
     this._callback.clickFavorite = cb;
+    this.element.querySelector(`.film-card__controls-item--favorite`).addEventListener(`click`, this._clickFavoriteHandler);
+  }
+
+  restoreHandlers() {
+    this.element.querySelector(`.film-card__poster`).addEventListener(`click`, this._openPopupHandler);
+    this.element.querySelector(`.film-card__title`).addEventListener(`click`, this._openPopupHandler);
+    this.element.querySelector(`.film-card__comments`).addEventListener(`click`, this._openPopupHandler);
+    this.element.querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, this._clickWatchlistHandler);
+    this.element.querySelector(`.film-card__controls-item--mark-as-watched`).addEventListener(`click`, this._clickWatchedHandler);
     this.element.querySelector(`.film-card__controls-item--favorite`).addEventListener(`click`, this._clickFavoriteHandler);
   }
 }

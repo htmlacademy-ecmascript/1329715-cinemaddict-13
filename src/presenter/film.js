@@ -1,6 +1,6 @@
 import {FilmCard as FilmCardView} from "../view/film-card";
-import {render, RENDER_POSITION, replace} from "../util/view";
-import {ButtonType} from "../util/const";
+import {render, RENDER_POSITION} from "../util/view";
+import {deepCopyFilm} from "../util/common";
 
 class Film {
   constructor(container, openPopupHandler, handleChangeFilm) {
@@ -31,35 +31,26 @@ class Film {
   }
 
   _handleClickWatchlist() {
-    this._filmCardView.toggleButton(ButtonType.WATCHLIST);
-    const newFilm = Object.assign({}, this._film);
+    const newFilm = deepCopyFilm(this._film);
     newFilm.userDetails.watchlist = !this._film.userDetails.watchlist;
-    this._handleChangeFilm(newFilm, false);
+    this._handleChangeFilm(newFilm);
   }
 
   _handleClickWatched() {
-    this._filmCardView.toggleButton(ButtonType.WATCHED);
-    const newFilm = Object.assign({}, this._film);
+    const newFilm = deepCopyFilm(this._film);
     newFilm.userDetails.alreadyWatched = !this._film.userDetails.alreadyWatched;
-    this._handleChangeFilm(newFilm, false);
+    this._handleChangeFilm(newFilm);
   }
 
   _handleClickFavorite() {
-    this._filmCardView.toggleButton(ButtonType.FAVORITE);
-    const newFilm = Object.assign({}, this._film);
+    const newFilm = deepCopyFilm(this._film);
     newFilm.userDetails.favorite = !this._film.userDetails.favorite;
-    this._handleChangeFilm(newFilm, false);
+    this._handleChangeFilm(newFilm);
   }
 
   update(newFilm, isReload) {
     this._film = newFilm;
-    if (isReload) {
-      const oldCardView = this._filmCardView;
-      this._filmCardView = new FilmCardView(newFilm);
-      replace(oldCardView, this._filmCardView);
-      oldCardView.destroy();
-      this.setHandlers();
-    }
+    this._filmCardView.updateState(newFilm, isReload);
   }
 }
 

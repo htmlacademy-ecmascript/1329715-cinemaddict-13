@@ -52,12 +52,12 @@ class FilmList {
     }
   }
 
-  _handleChangeFilm(updatedFilm, isReload) {
+  _handleChangeFilm(updatedFilm, isReloadCard = true, isReloadPopup = true) {
     const index = this._films.findIndex((film) => film.id === updatedFilm.id);
     this._films[index] = updatedFilm;
-    this._filmPresenters.get(updatedFilm.id).update(updatedFilm, isReload);
+    this._filmPresenters.get(updatedFilm.id).forEach((filmPresenter)=>filmPresenter.update(updatedFilm, isReloadCard));
     if (this._detailedInfoPopupView) {
-      this._detailedInfoPopupView.update(updatedFilm, false);
+      this._detailedInfoPopupView.updateState(updatedFilm, isReloadPopup);
     }
   }
 
@@ -131,7 +131,12 @@ class FilmList {
   _renderFilm(container, film) {
     const filmPresenter = new FilmPresenter(container, this._openPopup, this._handleChangeFilm);
     filmPresenter.init(film);
-    this._filmPresenters.set(film.id, filmPresenter);
+    const filmPresenters = this._filmPresenters.get(film.id);
+    if (filmPresenters) {
+      filmPresenters.push(filmPresenter);
+    } else {
+      this._filmPresenters.set(film.id, [filmPresenter]);
+    }
   }
 
   _renderFilms(from, to) {
