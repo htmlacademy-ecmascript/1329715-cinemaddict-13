@@ -184,9 +184,16 @@ class DetailedInfoPopup extends AbstractView {
   }
 
   _handleClickWatchlist() {
-    const newFilm = Object.assign({}, this._film);
+    const newFilm = this._deepCopyFilm();
     newFilm.userDetails.watchlist = !this._film.userDetails.watchlist;
     this._handleChangeFilm(newFilm, true);
+  }
+
+  _deepCopyFilm() {
+    const newFilm = Object.assign({}, this._film);
+    newFilm.userDetails = Object.assign({}, this._film.userDetails);
+    newFilm.filmInfo = Object.assign({}, this._film.filmInfo);
+    return newFilm;
   }
 
   _setClickWatchlistHandler() {
@@ -194,7 +201,7 @@ class DetailedInfoPopup extends AbstractView {
   }
 
   _handleClickWatched() {
-    const newFilm = Object.assign({}, this._film);
+    const newFilm = this._deepCopyFilm();
     newFilm.userDetails.alreadyWatched = !this._film.userDetails.alreadyWatched;
     this._handleChangeFilm(newFilm, true);
   }
@@ -204,7 +211,7 @@ class DetailedInfoPopup extends AbstractView {
   }
 
   _handleClickFavorite() {
-    const newFilm = Object.assign({}, this._film);
+    const newFilm = this._deepCopyFilm();
     newFilm.userDetails.favorite = !this._film.userDetails.favorite;
     this._handleChangeFilm(newFilm, true);
   }
@@ -222,6 +229,10 @@ class DetailedInfoPopup extends AbstractView {
 
   getTemplate() {
     return createDetailedInfoPopupTemplate(this._film);
+  }
+
+  update(newFilm, isReload) {
+    this._film = newFilm;
   }
 }
 

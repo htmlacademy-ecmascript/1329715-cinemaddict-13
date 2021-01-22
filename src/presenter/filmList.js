@@ -53,9 +53,12 @@ class FilmList {
   }
 
   _handleChangeFilm(updatedFilm, isReload) {
-    this._filmPresenters.get(updatedFilm.id).update(updatedFilm, isReload);
     const index = this._films.findIndex((film) => film.id === updatedFilm.id);
     this._films[index] = updatedFilm;
+    this._filmPresenters.get(updatedFilm.id).update(updatedFilm, isReload);
+    if (this._detailedInfoPopupView) {
+      this._detailedInfoPopupView.update(updatedFilm, false);
+    }
   }
 
   init(films) {
