@@ -45,7 +45,7 @@ class FilmList {
 
   _sortFilms(sortType) {
     this._currentSortType = sortType;
-    if (sortType === sortType.DEFAULT) {
+    if (this._currentSortType === SortType.DEFAULT) {
       this._films = this._sourcedFilms;
     } else {
       this._films = sort[sortType](this._films);
