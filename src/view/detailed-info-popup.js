@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import {humanizeFilmDuration} from "../util/view";
 import {Smart as SmartView} from "./smart";
 import {deepCopyFilm} from "../util/common";
+import {generateCommentId} from "../mock/comment";
 
 const createGenresTemplate = (genres) => {
   return genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(` `);
@@ -156,6 +157,14 @@ const createDetailedInfoPopupTemplate = (film) => {
           </section>`;
 };
 
+const EMPTY_COMMENT = {
+  id: null,
+  author: `some-cool-author`,
+  comment: null,
+  date: null,
+  emotion: null
+};
+
 class DetailedInfoPopup extends SmartView {
   constructor(film, closePopup, handleChangeFilm) {
     super(film);
@@ -169,6 +178,9 @@ class DetailedInfoPopup extends SmartView {
     this._handleClickFavorite = this._handleClickFavorite.bind(this);
     this._clickEmojiHandler = this._clickEmojiHandler.bind(this);
     this._clickDeleteButtonHandler = this._clickDeleteButtonHandler.bind(this);
+    this._submitCommentHandler = this._submitCommentHandler.bind(this);
+
+    this._newComment = EMPTY_COMMENT;
   }
 
   init() {
@@ -222,6 +234,7 @@ class DetailedInfoPopup extends SmartView {
     this._setClickFavoriteHandler();
     this._setClickEmojiHandler();
     this._setClickDeleteButtonHandler();
+    this._setSubmitCommentHandler();
   }
 
   getTemplate() {
@@ -232,10 +245,39 @@ class DetailedInfoPopup extends SmartView {
     this.setHandlers();
   }
 
+  _submitCommentHandler(evt) {
+    const commentText = evt.target.value;
+    if (evt.ctrlKey && evt.key === `Enter` &&
+      commentText && this._newComment.emotion) {
+      evt.preventDefault();
+      this._newComment.comment = commentText;
+      this._newComment.id = generateCommentId();
+      this._newComment.date = dayjs().toDate();
+
+      const newFilm = deepCopyFilm(this._state);
+      newFilm.comments.push(Object.assign({}, this._newComment));
+      this._handleScroll(newFilm);
+      this._newComment = EMPTY_COMMENT;
+    }
+  }
+
+  _handleScroll(newFilm) {
+    const scrollY = this.element.scrollTop;
+    this._handleChangeFilm(newFilm, true, true, true);
+    this.element.scroll(0, scrollY);
+  }
+
+  _setSubmitCommentHandler() {
+    this.element.querySelector(`.film-details__comment-input`).addEventListener(`keydown`, this._submitCommentHandler);
+  }
+
   _clickEmojiHandler(evt) {
     let type = ``;
     if (evt.target.tagName === `INPUT`) {
       type = evt.target.value;
+      this._newComment.emotion = type;
+      this.element.querySelector(`.film-details__add-emoji-label`).innerHTML = `<img src="./images/emoji/${type}.png" width="55" height="55" alt="emoji-${type}">`;
+      this.element.querySelector(`.film-details__comment-input`).focus();
     }
   }
 
@@ -248,11 +290,9 @@ class DetailedInfoPopup extends SmartView {
     if (evt.target.className === `film-details__comment-delete`) {
       const commentId = +evt.target.closest(`li`).dataset.id;
       const newFilm = deepCopyFilm(this._state);
-      const indexOfDeletedComment = newFilm.comments.findIndex((comment)=>comment.id === commentId);
+      const indexOfDeletedComment = newFilm.comments.findIndex((comment) => comment.id === commentId);
       newFilm.comments.splice(indexOfDeletedComment, 1);
-      const scrollY = window.scrollY;
-      this._handleChangeFilm(newFilm, true, true);
-      this.element.scrollTo(0, scrollY);
+      this._handleScroll(newFilm);
     }
   }
 

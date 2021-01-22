@@ -52,12 +52,15 @@ class FilmList {
     }
   }
 
-  _handleChangeFilm(updatedFilm, isReloadCard = true, isReloadPopup = true) {
+  _handleChangeFilm(updatedFilm, isReloadCard = true, isReloadPopup = true, rerenderMostCommented = false) {
     const index = this._films.findIndex((film) => film.id === updatedFilm.id);
     this._films[index] = updatedFilm;
     this._filmPresenters.get(updatedFilm.id).forEach((filmPresenter)=>filmPresenter.update(updatedFilm, isReloadCard));
     if (this._detailedInfoPopupView) {
       this._detailedInfoPopupView.updateState(updatedFilm, isReloadPopup);
+    }
+    if (rerenderMostCommented) {
+      this._renderMostCommentedFilms();
     }
   }
 
@@ -172,7 +175,11 @@ class FilmList {
   }
 
   _renderMostCommentedFilms() {
-    const mostCommentedViewElement = new MostCommentedView().element;
+    if (this._mostCommentedView) {
+      this._mostCommentedView.destroy();
+    }
+    this._mostCommentedView = new MostCommentedView();
+    const mostCommentedViewElement = this._mostCommentedView.element;
     render(this._filmSectionView, mostCommentedViewElement, RENDER_POSITION.BEFORE_END);
     const mostCommentedContainer = mostCommentedViewElement.querySelector(`.films-list__container`);
     const sortByCommentedFilms = sort[SortType.COMMENTED](this._films);

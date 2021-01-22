@@ -2,7 +2,7 @@ import {getIdGenerator, getRandomArrayElement, getRandomIntegerNumber} from "../
 import dayjs from "dayjs";
 import {EMOTIONS} from "../util/const";
 
-const generateId = getIdGenerator();
+const generateCommentId = getIdGenerator();
 
 const generateDate = () => {
   const maxSecondsGapYear = 31556952;
@@ -16,7 +16,7 @@ const generateEmotion = () => {
 
 const generateComment = () => {
   return {
-    "id": generateId(),
+    "id": generateCommentId(),
     "author": `author-${getRandomIntegerNumber(0, 10)}`,
     "comment": `comment-${getRandomIntegerNumber(0, 50)}`,
     "date": generateDate(),
@@ -24,4 +24,4 @@ const generateComment = () => {
   };
 };
 
-export {generateComment};
+export {generateComment, generateCommentId};
