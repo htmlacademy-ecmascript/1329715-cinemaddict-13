@@ -8,19 +8,19 @@ const createGenresTemplate = (genres) => {
 };
 
 const createCommentsTemplate = (comments) => {
-  return comments.map(({emotion, comment, author, date}) => `<li class="film-details__comment">
-                                      <span class="film-details__comment-emoji">
-                                        <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
-                                      </span>
-                                      <div>
-                                        <p class="film-details__comment-text">${comment}</p>
-                                        <p class="film-details__comment-info">
-                                          <span class="film-details__comment-author">${author}</span>
-                                          <span class="film-details__comment-day">${dayjs(date).format(`YYYY/MM/DD HH:mm`)}</span>
-                                          <button class="film-details__comment-delete">Delete</button>
-                                        </p>
-                                      </div>
-                                    </li>`).join(``);
+  return comments.map(({emotion, comment, author, date, id}) => `<li class="film-details__comment" data-id="${id}">
+                                                                  <span class="film-details__comment-emoji">
+                                                                    <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
+                                                                  </span>
+                                                                  <div>
+                                                                    <p class="film-details__comment-text">${comment}</p>
+                                                                    <p class="film-details__comment-info">
+                                                                      <span class="film-details__comment-author">${author}</span>
+                                                                      <span class="film-details__comment-day">${dayjs(date).format(`YYYY/MM/DD HH:mm`)}</span>
+                                                                      <button class="film-details__comment-delete">Delete</button>
+                                                                    </p>
+                                                                  </div>
+                                                                </li>`).join(``);
 };
 
 const createDetailedInfoPopupTemplate = (film) => {
@@ -167,6 +167,8 @@ class DetailedInfoPopup extends SmartView {
     this._handleClickWatchlist = this._handleClickWatchlist.bind(this);
     this._handleClickWatched = this._handleClickWatched.bind(this);
     this._handleClickFavorite = this._handleClickFavorite.bind(this);
+    this._clickEmojiHandler = this._clickEmojiHandler.bind(this);
+    this._clickDeleteButtonHandler = this._clickDeleteButtonHandler.bind(this);
   }
 
   init() {
@@ -218,6 +220,8 @@ class DetailedInfoPopup extends SmartView {
     this._setClickWatchlistHandler();
     this._setClickWatchedHandler();
     this._setClickFavoriteHandler();
+    this._setClickEmojiHandler();
+    this._setClickDeleteButtonHandler();
   }
 
   getTemplate() {
@@ -226,6 +230,34 @@ class DetailedInfoPopup extends SmartView {
 
   restoreHandlers() {
     this.setHandlers();
+  }
+
+  _clickEmojiHandler(evt) {
+    let type = ``;
+    if (evt.target.tagName === `INPUT`) {
+      type = evt.target.value;
+    }
+  }
+
+  _setClickEmojiHandler() {
+    this.element.querySelector(`.film-details__emoji-list`).addEventListener(`click`, this._clickEmojiHandler);
+  }
+
+  _clickDeleteButtonHandler(evt) {
+    evt.preventDefault();
+    if (evt.target.className === `film-details__comment-delete`) {
+      const commentId = +evt.target.closest(`li`).dataset.id;
+      const newFilm = deepCopyFilm(this._state);
+      const indexOfDeletedComment = newFilm.comments.findIndex((comment)=>comment.id === commentId);
+      newFilm.comments.splice(indexOfDeletedComment, 1);
+      const scrollY = window.scrollY;
+      this._handleChangeFilm(newFilm, true, true);
+      this.element.scrollTo(0, scrollY);
+    }
+  }
+
+  _setClickDeleteButtonHandler() {
+    this.element.querySelector(`.film-details__comments-list`).addEventListener(`click`, this._clickDeleteButtonHandler);
   }
 }
 
