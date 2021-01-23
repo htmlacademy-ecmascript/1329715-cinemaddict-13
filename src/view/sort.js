@@ -3,18 +3,19 @@ import {SortType} from "../util/sort";
 
 const ACTIVE_SORT_CLASS = `sort__button--active`;
 
-const createSortTemplate = () => {
+const createSortTemplate = (currentSortType) => {
   return `<ul class="sort">
-            <li><a href="#" class="sort__button sort__button--active" data-sort-type="${SortType.DEFAULT}">Sort by default</a></li>
-            <li><a href="#" class="sort__button" data-sort-type="${SortType.RELEASE_DATE}">Sort by date</a></li>
-            <li><a href="#" class="sort__button" data-sort-type="${SortType.RATED}">Sort by rating</a></li>
+            <li><a href="#" class="sort__button ${currentSortType === SortType.DEFAULT ? ` sort__button--active` : ``}" data-sort-type="${SortType.DEFAULT}">Sort by default</a></li>
+            <li><a href="#" class="sort__button ${currentSortType === SortType.RELEASE_DATE ? ` sort__button--active` : ``}" data-sort-type="${SortType.RELEASE_DATE}">Sort by date</a></li>
+            <li><a href="#" class="sort__button ${currentSortType === SortType.RATED ? ` sort__button--active` : ``}" data-sort-type="${SortType.RATED}">Sort by rating</a></li>
           </ul>`;
 };
 
 class Sort extends AbstractView {
-  constructor() {
+  constructor(currentSortType) {
     super();
 
+    this._currentSortType = currentSortType;
     this._clickSortHandler = this._clickSortHandler.bind(this);
   }
 
@@ -22,9 +23,11 @@ class Sort extends AbstractView {
     if (evt.target.tagName === `A`) {
       evt.preventDefault();
       const currentChosenSortElement = this.element.querySelector(`.${ACTIVE_SORT_CLASS}`);
-      currentChosenSortElement.classList.toggle(ACTIVE_SORT_CLASS);
-      evt.target.classList.toggle(ACTIVE_SORT_CLASS);
-      this._callback.clickSortType(evt.target.dataset.sortType);
+      if (currentChosenSortElement !== evt.target) {
+        currentChosenSortElement.classList.remove(ACTIVE_SORT_CLASS);
+        evt.target.classList.add(ACTIVE_SORT_CLASS);
+        this._callback.clickSortType(evt.target.dataset.sortType);
+      }
     }
   }
 
@@ -34,7 +37,7 @@ class Sort extends AbstractView {
   }
 
   getTemplate() {
-    return createSortTemplate();
+    return createSortTemplate(this._currentSortType);
   }
 }
 

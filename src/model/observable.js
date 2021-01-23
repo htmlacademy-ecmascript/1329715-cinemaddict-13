@@ -12,7 +12,7 @@ class Observable {
   }
 
   notify(event, payload) {
-    this._observerCallbacks.forEach((cb) => cb());
+    this._observerCallbacks.forEach((cb) => cb(event, payload));
   }
 }
 

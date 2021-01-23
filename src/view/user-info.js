@@ -8,7 +8,7 @@ const getUserRank = (watchedQuantity) => {
   const maxNumberForFan = 20;
   const minNumberForMovieBuff = 21;
   let rank = ``;
-  if (watchedQuantity > minNumberForNotice && watchedQuantity <= maxNumberForNotice) {
+  if (watchedQuantity >= minNumberForNotice && watchedQuantity <= maxNumberForNotice) {
     rank = UserRank.NOTICE;
   } else if (watchedQuantity >= minNumberForFan && watchedQuantity <= maxNumberForFan) {
     rank = UserRank.FAN;

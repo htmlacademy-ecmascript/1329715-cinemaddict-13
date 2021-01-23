@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import {humanizeFilmDuration} from "../util/view";
 import {Smart as SmartView} from "./smart";
+import {ButtonType} from "../util/const";
 
 const createFilmCard = (film) => {
   const {
@@ -98,6 +99,22 @@ class FilmCard extends SmartView {
     this.element.querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, this._clickWatchlistHandler);
     this.element.querySelector(`.film-card__controls-item--mark-as-watched`).addEventListener(`click`, this._clickWatchedHandler);
     this.element.querySelector(`.film-card__controls-item--favorite`).addEventListener(`click`, this._clickFavoriteHandler);
+  }
+
+  toggleButton(buttonType) {
+    let selector = ``;
+    switch (buttonType) {
+      case ButtonType.WATCHLIST:
+        selector = `film-card__controls-item--add-to-watchlist`;
+        break;
+      case ButtonType.WATCHED:
+        selector = `film-card__controls-item--mark-as-watched`;
+        break;
+      case ButtonType.FAVORITE:
+        selector = `film-card__controls-item--favorite`;
+        break;
+    }
+    this.element.querySelector(`.${selector}`).classList.toggle(`film-card__controls-item--active`);
   }
 }
 

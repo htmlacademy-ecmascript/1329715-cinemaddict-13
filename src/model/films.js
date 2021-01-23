@@ -9,9 +9,11 @@ class Films extends Observable {
     this._films = films;
   }
 
-  update(updatedFilm) {
+  update(updateType, updatedFilm) {
     const index = this._films.findIndex((film) => film.id === updatedFilm.id);
     this._films[index] = updatedFilm;
+
+    this.notify(updateType, updatedFilm);
   }
 }
 
