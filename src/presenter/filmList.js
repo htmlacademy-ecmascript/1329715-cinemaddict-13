@@ -16,13 +16,15 @@ import {FooterStats as FooterStatsView} from "../view/footer-stats";
 import {Film as FilmPresenter} from "./film";
 
 class FilmList {
-  constructor(body) {
+  constructor(body, filmsModel) {
     this._body = body;
     this._header = body.querySelector(`.header`);
     this._main = body.querySelector(`.main`);
     this._footer = body.querySelector(`.footer`);
     this._footerStats = this._footer.querySelector(`.footer__statistics`);
     this._currentSortType = SortType.DEFAULT;
+
+    this._filmsModel = filmsModel;
 
     this._closePopup = this._closePopup.bind(this);
     this._onEscKeydown = this._onEscKeydown.bind(this);
@@ -35,27 +37,25 @@ class FilmList {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
+  init() {
+    this.renderBoard();
+  }
+
+  _getFilms() {
+    return sort[this._currentSortType](this._filmsModel.films);
+  }
+
   _handleSortTypeChange(sortType) {
     if (this._currentSortType !== sortType) {
-      this._sortFilms(sortType);
+      this._currentSortType = sortType;
       this._clearFilmList();
       this._renderFilmList();
     }
   }
 
-  _sortFilms(sortType) {
-    this._currentSortType = sortType;
-    if (this._currentSortType === SortType.DEFAULT) {
-      this._films = this._sourcedFilms;
-    } else {
-      this._films = sort[sortType](this._films);
-    }
-  }
-
   _handleChangeFilm(updatedFilm, isReloadCard = true, isReloadPopup = true, rerenderMostCommented = false) {
-    const index = this._films.findIndex((film) => film.id === updatedFilm.id);
-    this._films[index] = updatedFilm;
-    this._filmPresenters.get(updatedFilm.id).forEach((filmPresenter)=>filmPresenter.update(updatedFilm, isReloadCard));
+    this._filmsModel.update(updatedFilm);
+    this._filmPresenters.get(updatedFilm.id).forEach((filmPresenter) => filmPresenter.update(updatedFilm, isReloadCard));
     if (this._detailedInfoPopupView) {
       this._detailedInfoPopupView.updateState(updatedFilm, isReloadPopup);
     }
@@ -64,18 +64,11 @@ class FilmList {
     }
   }
 
-  init(films) {
-    this._films = films.slice();
-    this._sourcedFilms = films.slice();
-
-    this.renderBoard();
-  }
-
   renderBoard() {
     this._renderMenuView();
     this._renderFilmSection();
     this._detailedInfoPopupView = null;
-    if (this._films.length === 0) {
+    if (this._filmsModel.films.length === 0) {
       this._renderListEmpty();
     } else {
       this._renderUserInfo();
@@ -88,9 +81,10 @@ class FilmList {
   }
 
   _renderFilmList() {
-    this._shownFilmCardQuantity = FILM_QUANTITY_PER_STEP;
+    const films = this._getFilms();
+    this._shownFilmCardQuantity = Math.min(films.length, FILM_QUANTITY_PER_STEP);
     this._renderFilmContainer();
-    this._renderFilms(0, Math.min(this._films.length, FILM_QUANTITY_PER_STEP));
+    this._renderFilms(films.slice(0, this._shownFilmCardQuantity));
     this._renderShowMoreButton();
   }
 
@@ -101,7 +95,7 @@ class FilmList {
   }
 
   _renderMenuView() {
-    this._menuView = new MenuView(generateFilters(this._films));
+    this._menuView = new MenuView(generateFilters(this._getFilms()));
     render(this._main, this._menuView, RENDER_POSITION.AFTER_BEGIN);
   }
 
@@ -116,7 +110,7 @@ class FilmList {
   }
 
   _renderUserInfo() {
-    this._userInfoView = new UserInfoView(this._films);
+    this._userInfoView = new UserInfoView(this._getFilms());
     render(this._header, this._userInfoView, RENDER_POSITION.BEFORE_END);
   }
 
@@ -142,21 +136,23 @@ class FilmList {
     }
   }
 
-  _renderFilms(from, to) {
-    this._films.slice(from, to)
-      .forEach((film) => this._renderFilm(this._filmContainerView, film));
+  _renderFilms(films) {
+    films.forEach((film) => this._renderFilm(this._filmContainerView, film));
   }
 
   _clickShowMoreButtonHandler() {
-    this._renderFilms(this._shownFilmCardQuantity, this._shownFilmCardQuantity + FILM_QUANTITY_PER_STEP);
-    this._shownFilmCardQuantity += FILM_QUANTITY_PER_STEP;
-    if (this._shownFilmCardQuantity >= this._films.length) {
+    const filmQuantity = this._getFilms().length;
+    const newRenderedFilmQuantity = Math.min(filmQuantity, this._shownFilmCardQuantity + FILM_QUANTITY_PER_STEP);
+    const films = this._getFilms().slice(this._shownFilmCardQuantity, newRenderedFilmQuantity);
+    this._renderFilms(films);
+    this._shownFilmCardQuantity = newRenderedFilmQuantity;
+    if (this._shownFilmCardQuantity >= filmQuantity) {
       this._showMoreButtonView.destroy();
     }
   }
 
   _renderShowMoreButton() {
-    if (this._films.length > FILM_QUANTITY_PER_STEP) {
+    if (this._getFilms().length > FILM_QUANTITY_PER_STEP) {
       this._showMoreButtonView = new ShowMoreButtonView();
       this._showMoreButtonView.setClickShowMoreHandler(this._clickShowMoreButtonHandler);
       render(this._container, this._showMoreButtonView, RENDER_POSITION.BEFORE_END);
@@ -167,7 +163,7 @@ class FilmList {
     const topRatedViewElement = new TopRatedView().element;
     render(this._filmSectionView, topRatedViewElement, RENDER_POSITION.BEFORE_END);
     const topRatedContainer = topRatedViewElement.querySelector(`.films-list__container`);
-    const sortByRateFilms = sort[SortType.RATED](this._films);
+    const sortByRateFilms = sort[SortType.RATED](this._getFilms());
     const rateQuantity = Math.min(FILM_QUANTITY_EXTRA, sortByRateFilms.length);
     for (let i = 0; i < rateQuantity; i++) {
       this._renderFilm(topRatedContainer, sortByRateFilms[i]);
@@ -182,7 +178,7 @@ class FilmList {
     const mostCommentedViewElement = this._mostCommentedView.element;
     render(this._filmSectionView, mostCommentedViewElement, RENDER_POSITION.BEFORE_END);
     const mostCommentedContainer = mostCommentedViewElement.querySelector(`.films-list__container`);
-    const sortByCommentedFilms = sort[SortType.COMMENTED](this._films);
+    const sortByCommentedFilms = sort[SortType.COMMENTED](this._getFilms());
     const commentedQuantity = Math.min(FILM_QUANTITY_EXTRA, sortByCommentedFilms.length);
     for (let i = 0; i < commentedQuantity; i++) {
       this._renderFilm(mostCommentedContainer, sortByCommentedFilms[i]);
@@ -190,7 +186,7 @@ class FilmList {
   }
 
   _renderFooterStats() {
-    this._footerStatsView = new FooterStatsView(this._films);
+    this._footerStatsView = new FooterStatsView(this._getFilms());
     render(this._footerStats, this._footerStatsView, RENDER_POSITION.AFTER_BEGIN);
   }
 
