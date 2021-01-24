@@ -2,7 +2,7 @@ import {generateFilm} from "./mock/film";
 import {FILM_QUANTITY} from "./util/const";
 import {FilmList as FilmListPresenter} from "./presenter/filmList";
 import {Films as FilmsModel} from "./model/films";
-import {Filters as FiltersModel} from "./model/filters";
+import {MenuItems as MenuItemsModel} from "./model/menuItems";
 import {Menu as MenuPresenter} from "./presenter/menu";
 
 const body = document.querySelector(`body`);
@@ -15,9 +15,9 @@ for (let i = 0; i < FILM_QUANTITY; i++) {
 
 const filmsModel = new FilmsModel();
 filmsModel.films = filmsMocks;
-const filtersModel = new FiltersModel();
+const menuItemsModel = new MenuItemsModel();
 
-const menuPresenter = new MenuPresenter(main, filtersModel, filmsModel);
+const menuPresenter = new MenuPresenter(main, menuItemsModel, filmsModel);
 menuPresenter.init();
-const filmListPresenter = new FilmListPresenter(body, filtersModel, filmsModel);
+const filmListPresenter = new FilmListPresenter(body, menuItemsModel, filmsModel);
 filmListPresenter.init();

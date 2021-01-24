@@ -1,7 +1,7 @@
 import {FilmCard as FilmCardView} from "../view/film-card";
 import {render, RENDER_POSITION} from "../util/view";
 import {deepCopyFilm} from "../util/common";
-import {ButtonType, UpdateType} from "../util/const";
+import {ButtonType, ActionType} from "../util/const";
 
 class Film {
   constructor(container, openPopupHandler, handleViewAction, isExtraCategory) {
@@ -34,19 +34,19 @@ class Film {
   _handleClickWatchlist() {
     const newFilm = deepCopyFilm(this._film);
     newFilm.userDetails.watchlist = !this._film.userDetails.watchlist;
-    this._handleViewAction(UpdateType.USER_INFO, newFilm);
+    this._handleViewAction(ActionType.USER_INFO, newFilm);
   }
 
   _handleClickWatched() {
     const newFilm = deepCopyFilm(this._film);
     newFilm.userDetails.alreadyWatched = !this._film.userDetails.alreadyWatched;
-    this._handleViewAction(UpdateType.USER_INFO, newFilm);
+    this._handleViewAction(ActionType.USER_INFO, newFilm);
   }
 
   _handleClickFavorite() {
     const newFilm = deepCopyFilm(this._film);
     newFilm.userDetails.favorite = !this._film.userDetails.favorite;
-    this._handleViewAction(UpdateType.USER_INFO, newFilm);
+    this._handleViewAction(ActionType.USER_INFO, newFilm);
   }
 
   update(newFilm, isReload) {

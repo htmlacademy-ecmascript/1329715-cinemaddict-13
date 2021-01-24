@@ -1,7 +1,7 @@
 import {render, RENDER_POSITION} from "../util/view";
 import {FilmsContainer as FilmsContainerView} from "../view/films-container";
 import {DetailedInfoPopup as DetailedInfoPopupView} from "../view/detailed-info-popup";
-import {FILM_QUANTITY_EXTRA, FILM_QUANTITY_PER_STEP, Filter, FilterType, UpdateType} from "../util/const";
+import {FILM_QUANTITY_EXTRA, FILM_QUANTITY_PER_STEP, Filter, MenuType, ActionType} from "../util/const";
 import {ShowMoreButton as ShowMoreButtonView} from "../view/show-more-button";
 import {TopRated as TopRatedView} from "../view/top-rated";
 import {sort, SortType} from "../util/sort";
@@ -14,7 +14,7 @@ import {FooterStats as FooterStatsView} from "../view/footer-stats";
 import {Film as FilmPresenter} from "./film";
 
 class FilmList {
-  constructor(body, filtersModel, filmsModel) {
+  constructor(body, menuItemsModel, filmsModel) {
     this._body = body;
     this._header = body.querySelector(`.header`);
     this._main = body.querySelector(`.main`);
@@ -23,7 +23,7 @@ class FilmList {
     this._currentSortType = SortType.DEFAULT;
 
     this._filmsModel = filmsModel;
-    this._filtersModel = filtersModel;
+    this._menuItemsModel = menuItemsModel;
 
     this._closePopup = this._closePopup.bind(this);
     this._onEscKeydown = this._onEscKeydown.bind(this);
@@ -37,15 +37,16 @@ class FilmList {
     this._handleViewAction = this._handleViewAction.bind(this);
 
     this._filmsModel.addObserver(this._handleModelEvent);
-    this._filtersModel.addObserver(this._handleModelEvent);
+    this._menuItemsModel.addObserver(this._handleModelEvent);
   }
 
   init() {
+    this._renderUserInfo();
     this.renderBoard();
   }
 
   _getFilms() {
-    const activeFilter = this._filtersModel.activeFilter;
+    const activeFilter = this._menuItemsModel.activeMenuItem;
     const films = this._filmsModel.films;
     const filteredFilms = Filter[activeFilter](films);
 
@@ -60,8 +61,8 @@ class FilmList {
 
   _handleViewAction(updateType, updatedFilm) {
     switch (updateType) {
-      case UpdateType.USER_INFO:
-      case UpdateType.COMMENT:
+      case ActionType.USER_INFO:
+      case ActionType.COMMENT:
         this._filmsModel.update(updateType, updatedFilm);
         break;
     }
@@ -69,10 +70,9 @@ class FilmList {
 
   _handleModelEvent(updateType, updatedFilm) {
     switch (updateType) {
-      case UpdateType.USER_INFO:
+      case ActionType.USER_INFO:
         this._renderUserInfo();
-        // TODO ADD if & filterModel
-        if (this._filtersModel.activeFilter !== FilterType.ALL) {
+        if (this._menuItemsModel.activeMenuItem !== MenuType.ALL) {
           this._clearFilmList();
           this._renderFilmList();
         } else {
@@ -82,15 +82,24 @@ class FilmList {
           this._detailedInfoPopupView.updateState(updatedFilm, false);
         }
         break;
-      case UpdateType.COMMENT:
+      case ActionType.COMMENT:
         this._filmPresenters.get(updatedFilm.id).forEach((filmPresenter) => filmPresenter.update(updatedFilm, true));
         this._detailedInfoPopupView.updateState(updatedFilm, true);
         this._renderMostCommentedFilms();
         break;
-      case UpdateType.FILTER:
+      case ActionType.FILTER:
+        // destroy stats view
         this._currentSortType = SortType.DEFAULT;
-        this._clearFilmList();
-        this._renderFilmList();
+        // this._clearFilmList();
+        // this._renderFilmList();
+
+        this.clearBoard();
+        this.renderBoard();
+        break;
+      case ActionType.STATS:
+        this.clearBoard();
+        // render stats view
+        break;
     }
   }
 
@@ -100,12 +109,16 @@ class FilmList {
     if (this._filmsModel.films.length === 0) {
       this._renderListEmpty();
     } else {
-      this._renderUserInfo();
       this._renderFilmList();
       this._renderTopRatedFilms();
       this._renderMostCommentedFilms();
     }
     this._renderFooterStats();
+  }
+
+  clearBoard() {
+    this._clearFilmList();
+    this._filmSectionView.destroy();
   }
 
   _renderFilmList() {
@@ -121,11 +134,15 @@ class FilmList {
 
   _clearFilmList() {
     this._filmPresenters.clear();
+    this._sortView.destroy();
     this._filmContainerView.destroy();
     this._showMoreButtonView.destroy();
   }
 
   _renderFilmSection() {
+    if (this._filmSectionView) {
+      this._filmSectionView.destroy();
+    }
     this._filmSectionView = new FilmSectionView();
     render(this._main, this._filmSectionView, RENDER_POSITION.BEFORE_END);
     this._container = this._filmSectionView.element.querySelector(`.films-list`);
@@ -224,7 +241,10 @@ class FilmList {
   }
 
   _renderFooterStats() {
-    this._footerStatsView = new FooterStatsView(this._getFilms());
+    if (this._footerStatsView) {
+      this._footerStatsView.destroy();
+    }
+    this._footerStatsView = new FooterStatsView(this._filmsModel.films);
     render(this._footerStats, this._footerStatsView, RENDER_POSITION.AFTER_BEGIN);
   }
 

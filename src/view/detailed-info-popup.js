@@ -3,7 +3,7 @@ import {humanizeFilmDuration} from "../util/view";
 import {Smart as SmartView} from "./smart";
 import {deepCopyFilm} from "../util/common";
 import {generateCommentId} from "../mock/comment";
-import {UpdateType} from "../util/const";
+import {ActionType} from "../util/const";
 import he from "he";
 
 const createGenresTemplate = (genres) => {
@@ -201,7 +201,7 @@ class DetailedInfoPopup extends SmartView {
   _handleClickWatchlist() {
     const newFilm = deepCopyFilm(this._state);
     newFilm.userDetails.watchlist = !this._state.userDetails.watchlist;
-    this._handleViewAction(UpdateType.USER_INFO, newFilm);
+    this._handleViewAction(ActionType.USER_INFO, newFilm);
   }
 
   _setClickWatchlistHandler() {
@@ -211,7 +211,7 @@ class DetailedInfoPopup extends SmartView {
   _handleClickWatched() {
     const newFilm = deepCopyFilm(this._state);
     newFilm.userDetails.alreadyWatched = !this._state.userDetails.alreadyWatched;
-    this._handleViewAction(UpdateType.USER_INFO, newFilm);
+    this._handleViewAction(ActionType.USER_INFO, newFilm);
   }
 
   _setClickWatchedHandler() {
@@ -221,7 +221,7 @@ class DetailedInfoPopup extends SmartView {
   _handleClickFavorite() {
     const newFilm = deepCopyFilm(this._state);
     newFilm.userDetails.favorite = !this._state.userDetails.favorite;
-    this._handleViewAction(UpdateType.USER_INFO, newFilm);
+    this._handleViewAction(ActionType.USER_INFO, newFilm);
   }
 
   _setClickFavoriteHandler() {
@@ -263,7 +263,7 @@ class DetailedInfoPopup extends SmartView {
 
   _handleScroll(newFilm) {
     const scrollY = this.element.scrollTop;
-    this._handleViewAction(UpdateType.COMMENT, newFilm);
+    this._handleViewAction(ActionType.COMMENT, newFilm);
     this.element.scroll(0, scrollY);
   }
 
