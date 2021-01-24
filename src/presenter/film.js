@@ -1,7 +1,7 @@
 import {FilmCard as FilmCardView} from "../view/film-card";
 import {render, RENDER_POSITION} from "../util/view";
 import {deepCopyFilm} from "../util/common";
-import {ButtonType, UpdateType, UserAction} from "../util/const";
+import {ButtonType, UpdateType} from "../util/const";
 
 class Film {
   constructor(container, openPopupHandler, handleViewAction, isExtraCategory) {

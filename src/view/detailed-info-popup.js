@@ -3,7 +3,7 @@ import {humanizeFilmDuration} from "../util/view";
 import {Smart as SmartView} from "./smart";
 import {deepCopyFilm} from "../util/common";
 import {generateCommentId} from "../mock/comment";
-import {UpdateType, UserAction} from "../util/const";
+import {UpdateType} from "../util/const";
 
 const createGenresTemplate = (genres) => {
   return genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(` `);

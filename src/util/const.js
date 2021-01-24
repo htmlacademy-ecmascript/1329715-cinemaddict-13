@@ -29,4 +29,21 @@ const FilterType = {
   FAVORITE: `favorite`
 };
 
-export {UserRank, EMOTIONS, FILM_QUANTITY_EXTRA, FILM_QUANTITY, FILM_QUANTITY_PER_STEP, UpdateType, ButtonType, FilterType};
+const Filter = {
+  [FilterType.ALL]: (films) => films,
+  [FilterType.WATCHLIST]: (films) => films.filter((film)=>film.userDetails.watchlist),
+  [FilterType.HISTORY]: (films) => films.filter((film)=>film.userDetails.alreadyWatched),
+  [FilterType.FAVORITE]: (films) => films.filter((film)=>film.userDetails.favorite),
+};
+
+export {
+  UserRank,
+  EMOTIONS,
+  FILM_QUANTITY_EXTRA,
+  FILM_QUANTITY,
+  FILM_QUANTITY_PER_STEP,
+  UpdateType,
+  ButtonType,
+  FilterType,
+  Filter
+};
