@@ -8,7 +8,7 @@ class Smart extends AbstractView {
   }
 
   updateState(newState, isReload) {
-    this._state = Object.assign({}, this._state, newState);
+    this._state = newState;
     if (isReload) {
       this.updateElement();
     }

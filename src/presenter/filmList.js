@@ -1,7 +1,7 @@
 import {render, RENDER_POSITION} from "../util/view";
 import {FilmsContainer as FilmsContainerView} from "../view/films-container";
 import {DetailedInfoPopup as DetailedInfoPopupView} from "../view/detailed-info-popup";
-import {FILM_QUANTITY_EXTRA, FILM_QUANTITY_PER_STEP, Filter, MenuType, ActionType} from "../util/const";
+import {ActionType, FILM_QUANTITY_EXTRA, FILM_QUANTITY_PER_STEP, Filter, MenuType} from "../util/const";
 import {ShowMoreButton as ShowMoreButtonView} from "../view/show-more-button";
 import {TopRated as TopRatedView} from "../view/top-rated";
 import {sort, SortType} from "../util/sort";
@@ -14,7 +14,7 @@ import {FooterStats as FooterStatsView} from "../view/footer-stats";
 import {Film as FilmPresenter} from "./film";
 
 class FilmList {
-  constructor(body, menuItemsModel, filmsModel) {
+  constructor(body, menuItemsModel, filmsModel, statsView) {
     this._body = body;
     this._header = body.querySelector(`.header`);
     this._main = body.querySelector(`.main`);
@@ -38,6 +38,8 @@ class FilmList {
 
     this._filmsModel.addObserver(this._handleModelEvent);
     this._menuItemsModel.addObserver(this._handleModelEvent);
+
+    this._statsView = statsView;
   }
 
   init() {
@@ -81,6 +83,7 @@ class FilmList {
         if (this._detailedInfoPopupView) {
           this._detailedInfoPopupView.updateState(updatedFilm, false);
         }
+        this._statsView.updateState(this._filmsModel.films, true);
         break;
       case ActionType.COMMENT:
         this._filmPresenters.get(updatedFilm.id).forEach((filmPresenter) => filmPresenter.update(updatedFilm, true));
@@ -88,17 +91,14 @@ class FilmList {
         this._renderMostCommentedFilms();
         break;
       case ActionType.FILTER:
-        // destroy stats view
+        this._statsView.hide();
         this._currentSortType = SortType.DEFAULT;
-        // this._clearFilmList();
-        // this._renderFilmList();
-
         this.clearBoard();
         this.renderBoard();
         break;
       case ActionType.STATS:
         this.clearBoard();
-        // render stats view
+        this._statsView.show();
         break;
     }
   }

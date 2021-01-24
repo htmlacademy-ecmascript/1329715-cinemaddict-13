@@ -104,10 +104,13 @@ const generateFilmInfo = () => {
 };
 
 const generateUserDetails = () => {
+  const watchingDate = dayjs().subtract(getRandomIntegerNumber(0, 500), `day`).toDate();
+
   return {
     watchlist: Boolean(getRandomIntegerNumber()),
     alreadyWatched: Boolean(getRandomIntegerNumber()),
-    favorite: Boolean(getRandomIntegerNumber())
+    favorite: Boolean(getRandomIntegerNumber()),
+    watchingDate
   };
 };
 

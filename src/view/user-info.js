@@ -41,4 +41,4 @@ class UserInfo extends AbstractView {
   }
 }
 
-export {UserInfo};
+export {UserInfo, getUserRank};
