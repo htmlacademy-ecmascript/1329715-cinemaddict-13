@@ -27,12 +27,12 @@ const statsView = new StatsView(filmsModel.films);
 statsView.hide();
 render(main, statsView, RENDER_POSITION.AFTER_BEGIN);
 
+const server = new Server(END_POINT, AUTHORIZATION);
 const menuPresenter = new MenuPresenter(main, menuItemsModel, filmsModel);
 menuPresenter.init();
-const filmListPresenter = new FilmListPresenter(body, menuItemsModel, filmsModel, statsView);
-filmListPresenter.init();
+const filmListPresenter = new FilmListPresenter(body, menuItemsModel, filmsModel, statsView, server);
 
-const server = new Server(END_POINT, AUTHORIZATION);
+filmListPresenter.init();
 server.getFilms()
   .then((films) => {
     filmsModel.films = films;

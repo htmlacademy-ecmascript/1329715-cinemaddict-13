@@ -15,7 +15,7 @@ import {Film as FilmPresenter} from "./film";
 import {Loading as LoadingView} from "../view/loading";
 
 class FilmList {
-  constructor(body, menuItemsModel, filmsModel, statsView) {
+  constructor(body, menuItemsModel, filmsModel, statsView, server) {
     this._body = body;
     this._header = body.querySelector(`.header`);
     this._main = body.querySelector(`.main`);
@@ -25,6 +25,7 @@ class FilmList {
 
     this._filmsModel = filmsModel;
     this._menuItemsModel = menuItemsModel;
+    this._server = server;
 
     this._closePopup = this._closePopup.bind(this);
     this._onEscKeydown = this._onEscKeydown.bind(this);
@@ -76,6 +77,7 @@ class FilmList {
     switch (updateType) {
       case ActionType.INIT:
         this._isLoading = false;
+        this._renderUserInfo();
         this.renderBoard();
         break;
       case ActionType.USER_INFO:
@@ -288,11 +290,22 @@ class FilmList {
       this._detailedInfoPopupView.destroy();
     }
     this._openPopupFilmId = film.id;
-    this._detailedInfoPopupView = new DetailedInfoPopupView(film, this._closePopup, this._handleViewAction);
-    document.addEventListener(`keydown`, this._onEscKeydown);
 
-    render(this._footer, this._detailedInfoPopupView, RENDER_POSITION.AFTER_END);
-    this._detailedInfoPopupView.init();
+    let filmComments;
+    this._server.getComments(film.id)
+      .then((comments) => {
+        filmComments = comments;
+      })
+      .catch(() => {
+        filmComments = [];
+      })
+      .then(() => {
+        this._detailedInfoPopupView = new DetailedInfoPopupView(film, filmComments, this._closePopup, this._handleViewAction);
+        document.addEventListener(`keydown`, this._onEscKeydown);
+
+        render(this._footer, this._detailedInfoPopupView, RENDER_POSITION.AFTER_END);
+        this._detailedInfoPopupView.init();
+      });
   }
 }
 

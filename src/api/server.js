@@ -17,6 +17,11 @@ class Server {
       .then((films) => films.map(FilmsModel.adaptToClient));
   }
 
+  getComments(filmId) {
+    return this._sendRequest({url: `comments/${filmId}`})
+      .then(this._toJSON);
+  }
+
   updateFilm(film) {
     const requestMetaData = {
       url: `movies/${film.id}`,

@@ -26,9 +26,8 @@ const createCommentsTemplate = (comments) => {
                                                                 </li>`).join(``);
 };
 
-const createDetailedInfoPopupTemplate = (film) => {
+const createDetailedInfoPopupTemplate = (film, comments) => {
   const {
-    comments,
     filmInfo: {
       poster, title, alternativeTitle, rating, director, writers, actors, release: {date, releaseCountry},
       runtime, genre, description, ageRating
@@ -47,7 +46,7 @@ const createDetailedInfoPopupTemplate = (film) => {
                 </div>
                 <div class="film-details__info-wrap">
                   <div class="film-details__poster">
-                    <img class="film-details__poster-img" src="./images/posters/${poster}" alt="">
+                    <img class="film-details__poster-img" src="${poster}" alt="">
 
                     <p class="film-details__age">${ageRating}+</p>
                   </div>
@@ -168,8 +167,9 @@ const EMPTY_COMMENT = {
 };
 
 class DetailedInfoPopup extends SmartView {
-  constructor(film, closePopup, handleViewAction) {
+  constructor(film, comments, closePopup, handleViewAction) {
     super(film);
+    this._comments = comments;
 
     this._closePopup = closePopup;
     this._handleViewAction = handleViewAction;
@@ -239,7 +239,7 @@ class DetailedInfoPopup extends SmartView {
   }
 
   getTemplate() {
-    return createDetailedInfoPopupTemplate(this._state);
+    return createDetailedInfoPopupTemplate(this._state, this._comments);
   }
 
   restoreHandlers() {
