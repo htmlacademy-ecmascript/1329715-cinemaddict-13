@@ -12,6 +12,7 @@ import {Sort as SortView} from "../view/sort";
 import {FilmsSection as FilmSectionView} from "../view/films-section";
 import {FooterStats as FooterStatsView} from "../view/footer-stats";
 import {Film as FilmPresenter} from "./film";
+import {Loading as LoadingView} from "../view/loading";
 
 class FilmList {
   constructor(body, menuItemsModel, filmsModel, statsView) {
@@ -40,6 +41,7 @@ class FilmList {
     this._menuItemsModel.addObserver(this._handleModelEvent);
 
     this._statsView = statsView;
+    this._isLoading = true;
   }
 
   init() {
@@ -72,6 +74,10 @@ class FilmList {
 
   _handleModelEvent(updateType, updatedFilm) {
     switch (updateType) {
+      case ActionType.INIT:
+        this._isLoading = false;
+        this.renderBoard();
+        break;
       case ActionType.USER_INFO:
         this._renderUserInfo();
         if (this._menuItemsModel.activeMenuItem !== MenuType.ALL) {
@@ -84,6 +90,7 @@ class FilmList {
           this._detailedInfoPopupView.updateState(updatedFilm, false);
         }
         this._statsView.updateState(this._filmsModel.films, true);
+        this._statsView.hide();
         break;
       case ActionType.COMMENT:
         this._filmPresenters.get(updatedFilm.id).forEach((filmPresenter) => filmPresenter.update(updatedFilm, true));
@@ -105,20 +112,30 @@ class FilmList {
 
   renderBoard() {
     this._renderFilmSection();
-    this._detailedInfoPopupView = null;
-    if (this._filmsModel.films.length === 0) {
-      this._renderListEmpty();
+    if (this._isLoading) {
+      this._renderLoading();
     } else {
-      this._renderFilmList();
-      this._renderTopRatedFilms();
-      this._renderMostCommentedFilms();
+      this._detailedInfoPopupView = null;
+
+      if (this._filmsModel.films.length === 0) {
+        this._renderListEmpty();
+      } else {
+        this._renderFilmList();
+        this._renderTopRatedFilms();
+        this._renderMostCommentedFilms();
+      }
+      this._renderFooterStats();
     }
-    this._renderFooterStats();
   }
 
   clearBoard() {
     this._clearFilmList();
     this._filmSectionView.destroy();
+  }
+
+  _renderLoading() {
+    this._loadingComponent = new LoadingView();
+    render(this._container, this._loadingComponent, RENDER_POSITION.BEFORE_END);
   }
 
   _renderFilmList() {

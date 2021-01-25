@@ -14,7 +14,8 @@ const ActionType = {
   COMMENT: `COMMENT`,
   USER_INFO: `USER_INFO`,
   FILTER: `FILTER`,
-  STATS: `STATS`
+  STATS: `STATS`,
+  INIT: `INIT`
 };
 
 const ButtonType = {

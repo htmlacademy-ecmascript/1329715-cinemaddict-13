@@ -34,6 +34,7 @@ class Menu {
       case ActionType.FILTER:
       case ActionType.USER_INFO:
       case ActionType.STATS:
+      case ActionType.INIT:
         this.init();
         break;
     }
