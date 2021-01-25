@@ -1,6 +1,6 @@
 import {render, RENDER_POSITION} from "../util/view";
 import {FilmsContainer as FilmsContainerView} from "../view/films-container";
-import {DetailedInfoPopup as DetailedInfoPopupView} from "../view/detailed-info-popup";
+import {DetailedInfoPopup as DetailedInfoPopupView, State} from "../view/detailed-info-popup";
 import {ActionType, FILM_QUANTITY_EXTRA, FILM_QUANTITY_PER_STEP, Filter, MenuType} from "../util/const";
 import {ShowMoreButton as ShowMoreButtonView} from "../view/show-more-button";
 import {TopRated as TopRatedView} from "../view/top-rated";
@@ -72,16 +72,23 @@ class FilmList {
           .then((response) => this._filmsModel.update(updateType, response));
         break;
       case ActionType.COMMENT_ADD:
+        this._detailedInfoPopupView.setState(State.SAVING);
         this._server.addComment(updatedData.filmId, updatedData.comment)
           .then((response) => {
             const adaptToClient = Films.adaptToClient(response.movie);
             this._filmsModel.update(updateType, adaptToClient, response.comments);
+          }).then(() => this._detailedInfoPopupView.resetNewComment())
+          .catch(() => {
+            this._detailedInfoPopupView.setState(State.ABORTING);
           });
         break;
       case ActionType.COMMENT_DELETE:
+        this._detailedInfoPopupView.setState(State.DELETING, updatedData.commentId);
         this._server.removeComment(updatedData.commentId)
           .then(() => {
             this._filmsModel.update(updateType, updatedData.film);
+          }).catch(() => {
+            this._detailedInfoPopupView.setState(State.ABORTING, updatedData.commentId);
           });
         break;
     }
@@ -112,6 +119,7 @@ class FilmList {
       case ActionType.COMMENT_ADD:
         this._detailedInfoPopupView._comments = comments;
         scrollY = this._detailedInfoPopupView.element.scrollTop;
+        this._detailedInfoPopupView.resetNewComment();
         this._detailedInfoPopupView.updateState(updatedFilm, true);
         this._detailedInfoPopupView.element.scroll(0, scrollY);
         this._filmPresenters.get(updatedFilm.id).forEach((filmPresenter) => filmPresenter.update(updatedFilm, true));

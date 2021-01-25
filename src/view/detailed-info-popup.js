@@ -2,31 +2,42 @@ import dayjs from "dayjs";
 import {humanizeFilmDuration} from "../util/view";
 import {Smart as SmartView} from "./smart";
 import {deepCopyFilm} from "../util/common";
-import {generateCommentId} from "../mock/comment";
 import {ActionType} from "../util/const";
 import he from "he";
+
+const SHAKE_ANIMATION_TIMEOUT = 600;
+
+const State = {
+  SAVING: `SAVING`,
+  DELETING: `DELETING`,
+  ABORTING: `ABORTING`
+};
 
 const createGenresTemplate = (genres) => {
   return genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(` `);
 };
 
-const createCommentsTemplate = (comments) => {
-  return comments.map(({emotion, comment, author, date, id}) => `<li class="film-details__comment" data-id="${id}">
-                                                                  <span class="film-details__comment-emoji">
-                                                                    <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
-                                                                  </span>
-                                                                  <div>
-                                                                    <p class="film-details__comment-text">${he.encode(comment)}</p>
-                                                                    <p class="film-details__comment-info">
-                                                                      <span class="film-details__comment-author">${author}</span>
-                                                                      <span class="film-details__comment-day">${dayjs(date).format(`YYYY/MM/DD HH:mm`)}</span>
-                                                                      <button class="film-details__comment-delete">Delete</button>
-                                                                    </p>
-                                                                  </div>
-                                                                </li>`).join(``);
+const createCommentsTemplate = (comments, isSaving, idDeleting) => {
+  return comments.map(({emotion, comment, author, date, id}) => {
+    const deleteText = id === idDeleting ? `Deleting` : `Delete`;
+    return `<li class="film-details__comment" data-id="${id}">
+              <span class="film-details__comment-emoji">
+                <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
+              </span>
+              <div>
+                <p class="film-details__comment-text">${he.encode(comment)}</p>
+                <p class="film-details__comment-info">
+                  <span class="film-details__comment-author">${author}</span>
+                  <span class="film-details__comment-day">${dayjs(date).format(`YYYY/MM/DD HH:mm`)}</span>
+                  <button class="film-details__comment-delete" ${isSaving ? `disabled` : ``}>${deleteText}</button>
+                </p>
+              </div>
+            </li>`;
+  }).join(``);
 };
 
-const createDetailedInfoPopupTemplate = (film, comments) => {
+const createDetailedInfoPopupTemplate = (film, comments, isSaving, idDeleting, newComment) => {
+  const isDisabled = isSaving || idDeleting;
   const {
     filmInfo: {
       poster, title, alternativeTitle, rating, director, writers, actors, release: {date, releaseCountry},
@@ -37,12 +48,20 @@ const createDetailedInfoPopupTemplate = (film, comments) => {
   const commentsQuantity = comments.length;
   const genreQuantity = genre.length;
   const duration = humanizeFilmDuration(runtime);
+  let emotionIcon = ``;
+  let commentText = ``;
+  if (newComment && newComment.emotion) {
+    emotionIcon = `<img src="./images/emoji/${newComment.emotion}.png" width="55" height="55" alt="emoji-${newComment.emotion}">`;
+  }
+  if (newComment && newComment.comment) {
+    commentText = newComment.comment;
+  }
 
   return `<section class="film-details">
             <form class="film-details__inner" action="" method="get">
               <div class="film-details__top-container">
                 <div class="film-details__close">
-                  <button class="film-details__close-btn" type="button">close</button>
+                  <button class="film-details__close-btn" type="button" ${isDisabled ? `disabled` : ``}>close</button>
                 </div>
                 <div class="film-details__info-wrap">
                   <div class="film-details__poster">
@@ -120,33 +139,35 @@ const createDetailedInfoPopupTemplate = (film, comments) => {
                   <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsQuantity}</span></h3>
 
                   <ul class="film-details__comments-list">
-                    ${createCommentsTemplate(comments)}
+                    ${createCommentsTemplate(comments, isSaving, idDeleting)}
                   </ul>
 
                   <div class="film-details__new-comment">
-                    <div class="film-details__add-emoji-label"></div>
+                    <div class="film-details__add-emoji-label">
+                        ${emotionIcon}
+                    </div>
 
                     <label class="film-details__comment-label">
-                      <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+                      <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment" ${isDisabled ? `disabled` : ``}>${commentText}</textarea>
                     </label>
 
                     <div class="film-details__emoji-list">
-                      <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
+                      <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile" ${isDisabled ? `disabled` : ``}>
                       <label class="film-details__emoji-label" for="emoji-smile">
                         <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
                       </label>
 
-                      <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
+                      <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping" ${isDisabled ? `disabled` : ``}>
                       <label class="film-details__emoji-label" for="emoji-sleeping">
                         <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
                       </label>
 
-                      <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
+                      <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke" ${isDisabled ? `disabled` : ``}>
                       <label class="film-details__emoji-label" for="emoji-puke">
                         <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
                       </label>
 
-                      <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
+                      <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry" ${isDisabled ? `disabled` : ``}>
                       <label class="film-details__emoji-label" for="emoji-angry">
                         <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
                       </label>
@@ -239,7 +260,7 @@ class DetailedInfoPopup extends SmartView {
   }
 
   getTemplate() {
-    return createDetailedInfoPopupTemplate(this._state, this._comments);
+    return createDetailedInfoPopupTemplate(this._state, this._comments, this._isSaving, this._idDeleting, this._newComment);
   }
 
   restoreHandlers() {
@@ -252,23 +273,10 @@ class DetailedInfoPopup extends SmartView {
       commentText && this._newComment.emotion) {
       evt.preventDefault();
       this._newComment.comment = commentText;
-      // this._newComment.id = generateCommentId();
       this._newComment.date = dayjs().toDate();
-
-      // const newFilm = deepCopyFilm(this._state);
-      // newFilm.comments.push(Object.assign({}, this._newComment));
-      // this._handleScroll(ActionType.COMMENT_ADD, {filmId: this._state.id, comment: this._newComment});
-
       this._handleViewAction(ActionType.COMMENT_ADD, {filmId: this._state.id, comment: this._newComment});
-
-      this._newComment = Object.assign({}, EMPTY_COMMENT);
     }
   }
-
-  // _handleScroll(actionType, data) {
-  //   const scrollY = this.element.scrollTop;
-  //   this.element.scroll(0, scrollY);
-  // }
 
   _setSubmitCommentHandler() {
     this.element.querySelector(`.film-details__comment-input`).addEventListener(`keydown`, this._submitCommentHandler);
@@ -304,6 +312,44 @@ class DetailedInfoPopup extends SmartView {
   _setClickDeleteButtonHandler() {
     this.element.querySelector(`.film-details__comments-list`).addEventListener(`click`, this._clickDeleteButtonHandler);
   }
+
+  setState(state, id) {
+    let scrollY;
+    switch (state) {
+      case State.SAVING:
+        this._isSaving = true;
+        scrollY = this.element.scrollTop;
+        this.updateElement();
+        this.element.scrollTo(0, scrollY);
+        this._isSaving = false;
+        break;
+      case State.DELETING:
+        this._idDeleting = id;
+        scrollY = this.element.scrollTop;
+        this.updateElement();
+        this.element.scrollTo(0, scrollY);
+        this._idDeleting = null;
+        break;
+      case State.ABORTING:
+        let shakeElement = id ? this.element.querySelector(`.film-details__comment[data-id = ${id}]`) : this.element.querySelector(`.film-details__new-comment`);
+        this.shake(shakeElement, this.updateElement);
+        break;
+    }
+  }
+
+  shake(shakeElement, cb) {
+    shakeElement.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    setTimeout(() => {
+      shakeElement.style.animation = ``;
+      const scrollY = this.element.scrollTop;
+      cb();
+      this.element.scrollTo(0, scrollY);
+    }, SHAKE_ANIMATION_TIMEOUT);
+  }
+
+  resetNewComment() {
+    this._newComment = Object.assign({}, EMPTY_COMMENT);
+  }
 }
 
-export {DetailedInfoPopup};
+export {DetailedInfoPopup, State};

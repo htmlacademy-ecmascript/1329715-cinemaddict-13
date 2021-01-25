@@ -5,6 +5,7 @@ class Smart extends AbstractView {
     super();
 
     this._state = state;
+    this.updateElement = this.updateElement.bind(this);
   }
 
   updateState(newState, isReload) {

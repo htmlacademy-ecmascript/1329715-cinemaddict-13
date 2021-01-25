@@ -1,5 +1,3 @@
-// import {generateFilm} from "./mock/film";
-// import {FILM_QUANTITY} from "./util/const";
 import {FilmList as FilmListPresenter} from "./presenter/filmList";
 import {Films as FilmsModel} from "./model/films";
 import {MenuItems as MenuItemsModel} from "./model/menuItems";
@@ -14,13 +12,7 @@ const END_POINT = `https://13.ecmascript.pages.academy/cinemaddict`;
 const body = document.querySelector(`body`);
 const main = body.querySelector(`.main`);
 
-// const filmsMocks = [];
-// for (let i = 0; i < FILM_QUANTITY; i++) {
-//   filmsMocks.push(generateFilm());
-// }
-
 const filmsModel = new FilmsModel();
-// filmsModel.films = filmsMocks;
 const menuItemsModel = new MenuItemsModel();
 
 const statsView = new StatsView(filmsModel.films);
