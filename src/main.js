@@ -20,6 +20,7 @@ filmsModel.films = filmsMocks;
 const menuItemsModel = new MenuItemsModel();
 
 const statsView = new StatsView(filmsModel.films);
+statsView.hide();
 render(main, statsView, RENDER_POSITION.AFTER_BEGIN);
 
 const menuPresenter = new MenuPresenter(main, menuItemsModel, filmsModel);

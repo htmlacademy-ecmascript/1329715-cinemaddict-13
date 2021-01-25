@@ -47,7 +47,7 @@ const generateComments = () => {
 };
 
 const generateGenres = () => {
-  const genresMock = getMockArray(`genre`, 20);
+  const genresMock = getMockArray(`genre`, 5);
   const genres = new Set();
   const genreQuantity = getRandomIntegerNumber(1, 5);
   while (genres.size < genreQuantity) {
