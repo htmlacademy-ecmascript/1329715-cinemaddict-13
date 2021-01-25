@@ -2,7 +2,9 @@ import {Films as FilmsModel} from "../model/films";
 
 const Method = {
   GET: `GET`,
-  PUT: `PUT`
+  PUT: `PUT`,
+  DELETE: `DELETE`,
+  POST: `POST`
 };
 
 class Server {
@@ -20,6 +22,27 @@ class Server {
   getComments(filmId) {
     return this._sendRequest({url: `comments/${filmId}`})
       .then(this._toJSON);
+  }
+
+  addComment(filmId, newComment) {
+    const requestMetaData = {
+      url: `comments/${filmId}`,
+      method: Method.POST,
+      body: JSON.stringify(newComment),
+      headers: new Headers({"Content-Type": `application/json`})
+    };
+
+    return this._sendRequest(requestMetaData)
+      .then(this._toJSON);
+  }
+
+  removeComment(commentId) {
+    const requestMetaData = {
+      url: `comments/${commentId}`,
+      method: Method.DELETE
+    };
+
+    return this._sendRequest(requestMetaData);
   }
 
   updateFilm(film) {

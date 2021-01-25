@@ -11,8 +11,8 @@ class Observable {
     this._observerCallbacks.delete(observerCb);
   }
 
-  notify(event, payload) {
-    this._observerCallbacks.forEach((cb) => cb(event, payload));
+  notify(event, payload, extraPayload) {
+    this._observerCallbacks.forEach((cb) => cb(event, payload, extraPayload));
   }
 }
 

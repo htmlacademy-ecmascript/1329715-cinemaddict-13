@@ -184,7 +184,7 @@ class DetailedInfoPopup extends SmartView {
   }
 
   init() {
-    this._newComment = EMPTY_COMMENT;
+    this._newComment = Object.assign({}, EMPTY_COMMENT);
     this.setHandlers();
   }
 
@@ -252,20 +252,23 @@ class DetailedInfoPopup extends SmartView {
       commentText && this._newComment.emotion) {
       evt.preventDefault();
       this._newComment.comment = commentText;
-      this._newComment.id = generateCommentId();
+      // this._newComment.id = generateCommentId();
       this._newComment.date = dayjs().toDate();
 
-      const newFilm = deepCopyFilm(this._state);
-      newFilm.comments.push(Object.assign({}, this._newComment));
-      this._handleScroll(newFilm);
+      // const newFilm = deepCopyFilm(this._state);
+      // newFilm.comments.push(Object.assign({}, this._newComment));
+      // this._handleScroll(ActionType.COMMENT_ADD, {filmId: this._state.id, comment: this._newComment});
+
+      this._handleViewAction(ActionType.COMMENT_ADD, {filmId: this._state.id, comment: this._newComment});
+
+      this._newComment = Object.assign({}, EMPTY_COMMENT);
     }
   }
 
-  _handleScroll(newFilm) {
-    const scrollY = this.element.scrollTop;
-    this._handleViewAction(ActionType.COMMENT, newFilm);
-    this.element.scroll(0, scrollY);
-  }
+  // _handleScroll(actionType, data) {
+  //   const scrollY = this.element.scrollTop;
+  //   this.element.scroll(0, scrollY);
+  // }
 
   _setSubmitCommentHandler() {
     this.element.querySelector(`.film-details__comment-input`).addEventListener(`keydown`, this._submitCommentHandler);
@@ -288,11 +291,13 @@ class DetailedInfoPopup extends SmartView {
   _clickDeleteButtonHandler(evt) {
     evt.preventDefault();
     if (evt.target.className === `film-details__comment-delete`) {
-      const commentId = +evt.target.closest(`li`).dataset.id;
+      const commentId = evt.target.closest(`li`).dataset.id;
       const newFilm = deepCopyFilm(this._state);
-      const indexOfDeletedComment = newFilm.comments.findIndex((comment) => comment.id === commentId);
+      const indexOfDeletedComment = newFilm.comments.findIndex((comment) => {
+        return comment === commentId;
+      });
       newFilm.comments.splice(indexOfDeletedComment, 1);
-      this._handleScroll(newFilm);
+      this._handleViewAction(ActionType.COMMENT_DELETE, {film: newFilm, commentId});
     }
   }
 

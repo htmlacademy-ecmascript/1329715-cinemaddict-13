@@ -13,6 +13,7 @@ import {FilmsSection as FilmSectionView} from "../view/films-section";
 import {FooterStats as FooterStatsView} from "../view/footer-stats";
 import {Film as FilmPresenter} from "./film";
 import {Loading as LoadingView} from "../view/loading";
+import {Films} from "../model/films";
 
 class FilmList {
   constructor(body, menuItemsModel, filmsModel, statsView, server) {
@@ -64,17 +65,30 @@ class FilmList {
     this._renderFilmList();
   }
 
-  _handleViewAction(updateType, updatedFilm) {
+  _handleViewAction(updateType, updatedData) {
     switch (updateType) {
       case ActionType.USER_INFO:
-      case ActionType.COMMENT:
-        this._server.updateFilm(updatedFilm)
+        this._server.updateFilm(updatedData)
           .then((response) => this._filmsModel.update(updateType, response));
+        break;
+      case ActionType.COMMENT_ADD:
+        this._server.addComment(updatedData.filmId, updatedData.comment)
+          .then((response) => {
+            const adaptToClient = Films.adaptToClient(response.movie);
+            this._filmsModel.update(updateType, adaptToClient, response.comments);
+          });
+        break;
+      case ActionType.COMMENT_DELETE:
+        this._server.removeComment(updatedData.commentId)
+          .then(() => {
+            this._filmsModel.update(updateType, updatedData.film);
+          });
         break;
     }
   }
 
-  _handleModelEvent(updateType, updatedFilm) {
+  _handleModelEvent(updateType, updatedFilm, comments) {
+    let scrollY;
     switch (updateType) {
       case ActionType.INIT:
         this._isLoading = false;
@@ -95,9 +109,23 @@ class FilmList {
         this._statsView.updateState(this._filmsModel.films, true);
         this._statsView.hide();
         break;
-      case ActionType.COMMENT:
-        this._filmPresenters.get(updatedFilm.id).forEach((filmPresenter) => filmPresenter.update(updatedFilm, true));
+      case ActionType.COMMENT_ADD:
+        this._detailedInfoPopupView._comments = comments;
+        scrollY = this._detailedInfoPopupView.element.scrollTop;
         this._detailedInfoPopupView.updateState(updatedFilm, true);
+        this._detailedInfoPopupView.element.scroll(0, scrollY);
+        this._filmPresenters.get(updatedFilm.id).forEach((filmPresenter) => filmPresenter.update(updatedFilm, true));
+        this._renderMostCommentedFilms();
+        break;
+      case ActionType.COMMENT_DELETE:
+        this._detailedInfoPopupView._comments = this._detailedInfoPopupView._comments.filter((comment) => {
+          let indexOf = updatedFilm.comments.indexOf(comment.id);
+          return indexOf !== -1;
+        });
+        scrollY = this._detailedInfoPopupView.element.scrollTop;
+        this._detailedInfoPopupView.updateState(updatedFilm, true);
+        this._detailedInfoPopupView.element.scroll(0, scrollY);
+        this._filmPresenters.get(updatedFilm.id).forEach((filmPresenter) => filmPresenter.update(updatedFilm, true));
         this._renderMostCommentedFilms();
         break;
       case ActionType.FILTER:

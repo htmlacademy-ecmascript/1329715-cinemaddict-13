@@ -17,11 +17,11 @@ class Films extends Observable {
     this.notify(ActionType.INIT);
   }
 
-  update(updateType, updatedFilm) {
+  update(updateType, updatedFilm, comments) {
     const index = this._films.findIndex((film) => film.id === updatedFilm.id);
     this._films[index] = updatedFilm;
 
-    this.notify(updateType, updatedFilm);
+    this.notify(updateType, updatedFilm, comments);
   }
 
   static adaptToClient(film) {
