@@ -23,14 +23,16 @@ class Server {
   }
 
   updateFilm(film) {
+    let adaptedToServer = FilmsModel.adaptToServer(film);
     const requestMetaData = {
       url: `movies/${film.id}`,
       method: Method.PUT,
-      body: JSON.stringify(FilmsModel.adaptToServer(film)),
+      body: JSON.stringify(adaptedToServer),
       headers: new Headers({"Content-Type": `application/json`})
     };
     return this._sendRequest(requestMetaData)
-      .then(this._toJSON);
+      .then(this._toJSON)
+      .then(FilmsModel.adaptToClient);
   }
 
   _sendRequest({url, method = Method.GET, body = null, headers = new Headers()}) {

@@ -70,7 +70,7 @@ class Films extends Observable {
     delete adaptedFilm[`film_info`].alternativeTitle;
     delete adaptedFilm[`film_info`].rating;
     delete adaptedFilm[`film_info`].ageRating;
-    delete adaptedFilm[`film_info`].release[`release_country`];
+    delete adaptedFilm[`film_info`].release.releaseCountry;
 
     delete adaptedFilm[`user_details`].alreadyWatched;
     delete adaptedFilm[`user_details`].watchingDate;

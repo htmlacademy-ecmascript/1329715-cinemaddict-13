@@ -68,7 +68,8 @@ class FilmList {
     switch (updateType) {
       case ActionType.USER_INFO:
       case ActionType.COMMENT:
-        this._filmsModel.update(updateType, updatedFilm);
+        this._server.updateFilm(updatedFilm)
+          .then((response) => this._filmsModel.update(updateType, response));
         break;
     }
   }
