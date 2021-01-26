@@ -11,7 +11,7 @@ const Period = {
   TODAY: `today`,
   WEEK: `week`,
   MONTH: `month`,
-  YEAR: `year`
+  YEAR: `year`,
 };
 
 const FilterPeriod = {
@@ -38,7 +38,6 @@ const FilterPeriod = {
 const renderChart = (statisticCtx, films) => {
   const filmQuantityMap = getFilmQuantityMap(films);
   statisticCtx.height = BAR_HEIGHT * Array.from(filmQuantityMap.keys()).length;
-
   return new Chart(statisticCtx, {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
@@ -48,52 +47,52 @@ const renderChart = (statisticCtx, films) => {
         data: Array.from(filmQuantityMap.values()),
         backgroundColor: `#ffe800`,
         hoverBackgroundColor: `#ffe800`,
-        anchor: `start`
-      }]
+        anchor: `start`,
+      }],
     },
     options: {
       plugins: {
         datalabels: {
           font: {
-            size: 20
+            size: 20,
           },
           color: `#ffffff`,
           anchor: `start`,
           align: `start`,
           offset: 40,
-        }
+        },
       },
       scales: {
         yAxes: [{
           ticks: {
             fontColor: `#ffffff`,
             padding: 100,
-            fontSize: 20
+            fontSize: 20,
           },
           gridLines: {
             display: false,
-            drawBorder: false
+            drawBorder: false,
           },
-          barThickness: 24
+          barThickness: 24,
         }],
         xAxes: [{
           ticks: {
             display: false,
-            beginAtZero: true
+            beginAtZero: true,
           },
           gridLines: {
             display: false,
-            drawBorder: false
+            drawBorder: false,
           },
         }],
       },
       legend: {
-        display: false
+        display: false,
       },
       tooltips: {
-        enabled: false
-      }
-    }
+        enabled: false,
+      },
+    },
   });
 };
 

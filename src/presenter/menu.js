@@ -1,5 +1,5 @@
 import {Menu as MenuView} from "../view/menu";
-import {generateFilters} from "../mock/filter";
+import {generateFilters} from "../util/filter";
 import {render, RENDER_POSITION} from "../util/view";
 import {ActionType} from "../util/const";
 

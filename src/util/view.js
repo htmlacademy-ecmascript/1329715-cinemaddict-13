@@ -42,18 +42,4 @@ const createElement = (markup) => {
   return parentElement.firstChild;
 };
 
-const replace = (oldComponent, newComponent) => {
-  if (oldComponent instanceof AbstractView) {
-    oldComponent = oldComponent.element;
-  }
-  if (newComponent instanceof AbstractView) {
-    newComponent = newComponent.element;
-  }
-  const parent = oldComponent.parentElement;
-  if (parent === null || newComponent === null) {
-    throw new Error(`Can't replace some null components: oldComponent(${oldComponent}) to newComponent(${newComponent}) in the parent(${parent})`);
-  }
-  parent.replaceChild(newComponent, oldComponent);
-};
-
-export {RENDER_POSITION, render, humanizeFilmDuration, createElement, replace};
+export {RENDER_POSITION, render, humanizeFilmDuration, createElement};

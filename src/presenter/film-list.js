@@ -101,6 +101,8 @@ class FilmList {
         this._isLoading = false;
         this._renderUserInfo();
         this.renderBoard();
+        this._statsView.updateState(this._filmsModel.films, true);
+        this._statsView.hide();
         break;
       case ActionType.USER_INFO:
         this._renderUserInfo();
