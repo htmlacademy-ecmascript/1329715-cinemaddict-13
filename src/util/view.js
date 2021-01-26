@@ -6,6 +6,8 @@ const RENDER_POSITION = {
   AFTER_END: `afterend`,
 };
 
+const MIN_IN_HOUR = 60;
+
 const render = (container, component, place) => {
   if (container instanceof AbstractView) {
     container = container.element;
@@ -28,10 +30,9 @@ const render = (container, component, place) => {
 };
 
 const humanizeFilmDuration = (durationInMinutes) => {
-  const minInHour = 60;
   let humanizedFormat = `${durationInMinutes}m`;
-  if (durationInMinutes >= minInHour) {
-    humanizedFormat = `${Math.floor(durationInMinutes / minInHour)}h ${durationInMinutes % minInHour}m`;
+  if (durationInMinutes >= MIN_IN_HOUR) {
+    humanizedFormat = `${Math.floor(durationInMinutes / MIN_IN_HOUR)}h ${durationInMinutes % MIN_IN_HOUR}m`;
   }
   return humanizedFormat;
 };
@@ -42,18 +43,4 @@ const createElement = (markup) => {
   return parentElement.firstChild;
 };
 
-const replace = (oldComponent, newComponent) => {
-  if (oldComponent instanceof AbstractView) {
-    oldComponent = oldComponent.element;
-  }
-  if (newComponent instanceof AbstractView) {
-    newComponent = newComponent.element;
-  }
-  const parent = oldComponent.parentElement;
-  if (parent === null || newComponent === null) {
-    throw new Error(`Can't replace some null components: oldComponent(${oldComponent}) to newComponent(${newComponent}) in the parent(${parent})`);
-  }
-  parent.replaceChild(newComponent, oldComponent);
-};
-
-export {RENDER_POSITION, render, humanizeFilmDuration, createElement, replace};
+export {RENDER_POSITION, render, humanizeFilmDuration, createElement};

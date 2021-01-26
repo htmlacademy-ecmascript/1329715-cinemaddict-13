@@ -1,18 +1,17 @@
 import {UserRank} from "../util/const";
 import {AbstractView} from "./abstract-view";
 
+const MIN_NOVICE_QUANTITY = 1;
+const MIN_FAN_QUANTITY = 11;
+const MIN_MOVIE_BUFF_QUANTITY = 21;
+
 const getUserRank = (watchedQuantity) => {
-  const minNumberForNotice = 1;
-  const maxNumberForNotice = 10;
-  const minNumberForFan = 11;
-  const maxNumberForFan = 20;
-  const minNumberForMovieBuff = 21;
   let rank = ``;
-  if (watchedQuantity >= minNumberForNotice && watchedQuantity <= maxNumberForNotice) {
-    rank = UserRank.NOTICE;
-  } else if (watchedQuantity >= minNumberForFan && watchedQuantity <= maxNumberForFan) {
+  if (watchedQuantity >= MIN_NOVICE_QUANTITY && watchedQuantity < MIN_FAN_QUANTITY) {
+    rank = UserRank.NOVICE;
+  } else if (watchedQuantity >= MIN_FAN_QUANTITY && watchedQuantity < MIN_MOVIE_BUFF_QUANTITY) {
     rank = UserRank.FAN;
-  } else if (watchedQuantity >= minNumberForMovieBuff) {
+  } else if (watchedQuantity >= MIN_MOVIE_BUFF_QUANTITY) {
     rank = UserRank.MOVIE_BUFF;
   }
   return rank;

@@ -88,8 +88,8 @@ class FilmList {
           .then(() => {
             this._filmsModel.update(updateType, updatedData.film);
           }).catch(() => {
-            this._detailedInfoPopupView.setState(State.ABORTING, updatedData.commentId);
-          });
+          this._detailedInfoPopupView.setState(State.ABORTING, updatedData.commentId);
+        });
         break;
     }
   }
@@ -101,12 +101,16 @@ class FilmList {
         this._isLoading = false;
         this._renderUserInfo();
         this.renderBoard();
+        this._statsView.updateState(this._filmsModel.films, true);
+        this._statsView.hide();
         break;
       case ActionType.USER_INFO:
         this._renderUserInfo();
-        if (this._menuItemsModel.activeMenuItem !== MenuType.ALL) {
+        const activeMenuItem = this._menuItemsModel.activeMenuItem;
+        if (activeMenuItem !== MenuType.ALL && activeMenuItem !== MenuType.STATS) {
           this._clearFilmList();
-          this._renderFilmList();
+          this._shownFilmCardQuantity--;
+          this._renderFilmList(false);
         } else {
           this._filmPresenters.get(updatedFilm.id).forEach((filmPresenter) => filmPresenter.update(updatedFilm, false));
         }
@@ -177,15 +181,21 @@ class FilmList {
     render(this._container, this._loadingComponent, RENDER_POSITION.BEFORE_END);
   }
 
-  _renderFilmList() {
+  _renderFilmList(resetShownFilms = true) {
     const films = this._getFilms();
-    this._renderSort();
-    this._shownFilmCardQuantity = Math.min(films.length, FILM_QUANTITY_PER_STEP);
-    this._renderFilmContainer();
-    this._renderFilms(films.slice(0, this._shownFilmCardQuantity));
-    this._renderShowMoreButton();
-    this._renderTopRatedFilms();
-    this._renderMostCommentedFilms();
+    if (films.length) {
+      this._renderSort();
+      if (resetShownFilms) {
+        this._shownFilmCardQuantity = Math.min(films.length, FILM_QUANTITY_PER_STEP);
+      }
+      this._renderFilmContainer();
+      this._renderFilms(films.slice(0, this._shownFilmCardQuantity));
+      this._renderShowMoreButton();
+      this._renderTopRatedFilms();
+      this._renderMostCommentedFilms();
+    } else {
+      this._renderListEmpty();
+    }
   }
 
   _clearFilmList() {
@@ -220,11 +230,9 @@ class FilmList {
     if (this._sortView) {
       this._sortView.destroy();
     }
-    if (this._getFilms().length) {
-      this._sortView = new SortView(this._currentSortType);
-      render(this._body.querySelector(`.main-navigation`), this._sortView, RENDER_POSITION.AFTER_END);
-      this._sortView.setClickSortHandler(this._handleSortTypeChange);
-    }
+    this._sortView = new SortView(this._currentSortType);
+    render(this._body.querySelector(`.main-navigation`), this._sortView, RENDER_POSITION.AFTER_END);
+    this._sortView.setClickSortHandler(this._handleSortTypeChange);
   }
 
   _renderFilmContainer() {
