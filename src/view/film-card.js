@@ -3,6 +3,8 @@ import {humanizeFilmDuration} from "../util/view";
 import {Smart as SmartView} from "./smart";
 import {ButtonType} from "../util/const";
 
+const SHORT_DESCRIPTION_LENGTH = 140;
+
 const createFilmCard = (film) => {
   const {
     comments,
@@ -12,9 +14,8 @@ const createFilmCard = (film) => {
   const commentsQuantity = comments.length;
   const genre = film.filmInfo.genre[0];
   let description = film.filmInfo.description;
-  const lengthForShortDescription = 140;
-  if (description.length > lengthForShortDescription) {
-    description = `${description.slice(lengthForShortDescription - 1)}...`;
+  if (description.length > SHORT_DESCRIPTION_LENGTH) {
+    description = `${description.slice(SHORT_DESCRIPTION_LENGTH - 1)}...`;
   }
   const duration = humanizeFilmDuration(runtime);
   const activeButtonClass = `film-card__controls-item--active`;

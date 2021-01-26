@@ -269,7 +269,8 @@ class DetailedInfoPopup extends SmartView {
 
   _submitCommentHandler(evt) {
     const commentText = evt.target.value;
-    if (evt.ctrlKey && evt.key === `Enter` &&
+    const isCtrlOrCommandPressed = evt.ctrlKey || evt.metaKey;
+    if (isCtrlOrCommandPressed && evt.key === `Enter` &&
       commentText && this._newComment.emotion) {
       evt.preventDefault();
       this._newComment.comment = commentText;
