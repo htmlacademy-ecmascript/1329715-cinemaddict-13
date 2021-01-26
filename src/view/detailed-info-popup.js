@@ -332,7 +332,7 @@ class DetailedInfoPopup extends SmartView {
         this._idDeleting = null;
         break;
       case State.ABORTING:
-        let shakeElement = id ? this.element.querySelector(`.film-details__comment[data-id = "${id}"]`) : this.element.querySelector(`.film-details__new-comment`);
+        const shakeElement = id ? this.element.querySelector(`.film-details__comment[data-id = "${id}"]`) : this.element.querySelector(`.film-details__new-comment`);
         this.shake(shakeElement, this.updateElement);
         break;
     }
