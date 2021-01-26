@@ -8,7 +8,7 @@ const MIN_MOVIE_BUFF_QUANTITY = 21;
 const getUserRank = (watchedQuantity) => {
   let rank = ``;
   if (watchedQuantity >= MIN_NOVICE_QUANTITY && watchedQuantity < MIN_FAN_QUANTITY) {
-    rank = UserRank.NOTICE;
+    rank = UserRank.NOVICE;
   } else if (watchedQuantity >= MIN_FAN_QUANTITY && watchedQuantity < MIN_MOVIE_BUFF_QUANTITY) {
     rank = UserRank.FAN;
   } else if (watchedQuantity >= MIN_MOVIE_BUFF_QUANTITY) {

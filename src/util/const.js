@@ -1,5 +1,5 @@
 const UserRank = {
-  NOTICE: `notice`,
+  NOVICE: `novice`,
   FAN: `fan`,
   MOVIE_BUFF: `movie buff`
 };
