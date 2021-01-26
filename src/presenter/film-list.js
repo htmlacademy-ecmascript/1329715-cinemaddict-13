@@ -88,8 +88,8 @@ class FilmList {
           .then(() => {
             this._filmsModel.update(updateType, updatedData.film);
           }).catch(() => {
-          this._detailedInfoPopupView.setState(State.ABORTING, updatedData.commentId);
-        });
+            this._detailedInfoPopupView.setState(State.ABORTING, updatedData.commentId);
+          });
         break;
     }
   }
@@ -131,7 +131,7 @@ class FilmList {
         break;
       case ActionType.COMMENT_DELETE:
         this._detailedInfoPopupView._comments = this._detailedInfoPopupView._comments.filter((comment) => {
-          let indexOf = updatedFilm.comments.indexOf(comment.id);
+          const indexOf = updatedFilm.comments.indexOf(comment.id);
           return indexOf !== -1;
         });
         scrollY = this._detailedInfoPopupView.element.scrollTop;

@@ -46,7 +46,7 @@ class Server {
   }
 
   updateFilm(film) {
-    let adaptedToServer = FilmsModel.adaptToServer(film);
+    const adaptedToServer = FilmsModel.adaptToServer(film);
     const requestMetaData = {
       url: `movies/${film.id}`,
       method: Method.PUT,
