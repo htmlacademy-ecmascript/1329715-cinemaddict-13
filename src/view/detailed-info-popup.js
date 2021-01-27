@@ -1,16 +1,17 @@
 import dayjs from "dayjs";
 import {humanizeFilmDuration} from "../util/view";
 import {Smart as SmartView} from "./smart";
-import {deepCopyFilm} from "../util/common";
+import {deepCopyFilm, isOnline} from "../util/common";
 import {ActionType} from "../util/const";
 import he from "he";
+import {toast} from "../util/toast/toast";
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
 
 const State = {
   SAVING: `SAVING`,
   DELETING: `DELETING`,
-  ABORTING: `ABORTING`
+  ABORTING: `ABORTING`,
 };
 
 const createGenresTemplate = (genres) => {
@@ -18,6 +19,7 @@ const createGenresTemplate = (genres) => {
 };
 
 const createCommentsTemplate = (comments, isSaving, idDeleting) => {
+  comments = comments[0] && comments[0].emotion ? comments : [];
   return comments.map(({emotion, comment, author, date, id}) => {
     const deleteText = id === idDeleting ? `Deleting` : `Delete`;
     return `<li class="film-details__comment" data-id="${id}">
@@ -41,9 +43,9 @@ const createDetailedInfoPopupTemplate = (film, comments, isSaving, idDeleting, n
   const {
     filmInfo: {
       poster, title, alternativeTitle, rating, director, writers, actors, release: {date, releaseCountry},
-      runtime, genre, description, ageRating
+      runtime, genre, description, ageRating,
     },
-    userDetails: {watchlist, alreadyWatched, favorite}
+    userDetails: {watchlist, alreadyWatched, favorite},
   } = film;
   const commentsQuantity = comments.length;
   const genreQuantity = genre.length;
@@ -184,7 +186,7 @@ const EMPTY_COMMENT = {
   author: `some-cool-author`,
   comment: null,
   date: null,
-  emotion: null
+  emotion: null,
 };
 
 class DetailedInfoPopup extends SmartView {
@@ -270,9 +272,17 @@ class DetailedInfoPopup extends SmartView {
   _submitCommentHandler(evt) {
     const commentText = evt.target.value;
     const isCtrlOrCommandPressed = evt.ctrlKey || evt.metaKey;
-    if (isCtrlOrCommandPressed && evt.key === `Enter` &&
-      commentText && this._newComment.emotion) {
+    if (isCtrlOrCommandPressed && evt.key === `Enter` && commentText && this._newComment.emotion) {
       evt.preventDefault();
+
+      if (!isOnline()) {
+        toast(`You can't add comment offline`);
+        const shakeElement = this.element.querySelector(`.film-details__new-comment`);
+        this.shake(shakeElement);
+        return;
+
+      }
+
       this._newComment.comment = commentText;
       this._newComment.date = dayjs().toDate();
       this._handleViewAction(ActionType.COMMENT_ADD, {filmId: this._state.id, comment: this._newComment});
@@ -299,8 +309,16 @@ class DetailedInfoPopup extends SmartView {
 
   _clickDeleteButtonHandler(evt) {
     evt.preventDefault();
+
     if (evt.target.className === `film-details__comment-delete`) {
       const commentId = evt.target.closest(`li`).dataset.id;
+      if (!isOnline()) {
+        toast(`You can't delete comment offline`);
+        const shakeElement = this.element.querySelector(`.film-details__comment[data-id = "${commentId}"]`);
+        this.shake(shakeElement);
+        return;
+      }
+
       const newFilm = deepCopyFilm(this._state);
       const indexOfDeletedComment = newFilm.comments.findIndex((comment) => {
         return comment === commentId;
@@ -343,7 +361,9 @@ class DetailedInfoPopup extends SmartView {
     setTimeout(() => {
       shakeElement.style.animation = ``;
       const scrollY = this.element.scrollTop;
-      cb();
+      if (cb) {
+        cb();
+      }
       this.element.scrollTo(0, scrollY);
     }, SHAKE_ANIMATION_TIMEOUT);
   }

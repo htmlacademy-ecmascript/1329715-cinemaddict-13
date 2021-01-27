@@ -342,7 +342,7 @@ class FilmList {
         filmComments = comments;
       })
       .catch(() => {
-        filmComments = [];
+        filmComments = film.comments;
       })
       .then(() => {
         this._detailedInfoPopupView = new DetailedInfoPopupView(film, filmComments, this._closePopup, this._handleViewAction);
