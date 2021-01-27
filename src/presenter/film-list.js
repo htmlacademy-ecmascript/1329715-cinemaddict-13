@@ -88,8 +88,8 @@ class FilmList {
           .then(() => {
             this._filmsModel.update(updateType, updatedData.film);
           }).catch(() => {
-            this._detailedInfoPopupView.setState(State.ABORTING, updatedData.commentId);
-          });
+          this._detailedInfoPopupView.setState(State.ABORTING, updatedData.commentId);
+        });
         break;
     }
   }
@@ -278,14 +278,16 @@ class FilmList {
     if (this._topRatedView) {
       this._topRatedView.destroy();
     }
-    this._topRatedView = new TopRatedView();
-    const topRatedViewElement = this._topRatedView.element;
-    render(this._filmSectionView, topRatedViewElement, RENDER_POSITION.BEFORE_END);
-    const topRatedContainer = topRatedViewElement.querySelector(`.films-list__container`);
     const sortByRateFilms = sort[SortType.RATED](this._filmsModel.films);
-    const rateQuantity = Math.min(FILM_QUANTITY_EXTRA, sortByRateFilms.length);
-    for (let i = 0; i < rateQuantity; i++) {
-      this._renderFilm(topRatedContainer, sortByRateFilms[i], true);
+    if (sortByRateFilms[0] && +sortByRateFilms[0].filmInfo.rating !== 0) {
+      this._topRatedView = new TopRatedView();
+      const topRatedViewElement = this._topRatedView.element;
+      render(this._filmSectionView, topRatedViewElement, RENDER_POSITION.BEFORE_END);
+      const topRatedContainer = topRatedViewElement.querySelector(`.films-list__container`);
+      const rateQuantity = Math.min(FILM_QUANTITY_EXTRA, sortByRateFilms.length);
+      for (let i = 0; i < rateQuantity; i++) {
+        this._renderFilm(topRatedContainer, sortByRateFilms[i], true);
+      }
     }
   }
 
@@ -293,14 +295,16 @@ class FilmList {
     if (this._mostCommentedView) {
       this._mostCommentedView.destroy();
     }
-    this._mostCommentedView = new MostCommentedView();
-    const mostCommentedViewElement = this._mostCommentedView.element;
-    render(this._filmSectionView, mostCommentedViewElement, RENDER_POSITION.BEFORE_END);
-    const mostCommentedContainer = mostCommentedViewElement.querySelector(`.films-list__container`);
     const sortByCommentedFilms = sort[SortType.COMMENTED](this._filmsModel.films);
-    const commentedQuantity = Math.min(FILM_QUANTITY_EXTRA, sortByCommentedFilms.length);
-    for (let i = 0; i < commentedQuantity; i++) {
-      this._renderFilm(mostCommentedContainer, sortByCommentedFilms[i], true);
+    if (sortByCommentedFilms[0] && sortByCommentedFilms[0].comments.length !== 0) {
+      this._mostCommentedView = new MostCommentedView();
+      const mostCommentedViewElement = this._mostCommentedView.element;
+      render(this._filmSectionView, mostCommentedViewElement, RENDER_POSITION.BEFORE_END);
+      const mostCommentedContainer = mostCommentedViewElement.querySelector(`.films-list__container`);
+      const commentedQuantity = Math.min(FILM_QUANTITY_EXTRA, sortByCommentedFilms.length);
+      for (let i = 0; i < commentedQuantity; i++) {
+        this._renderFilm(mostCommentedContainer, sortByCommentedFilms[i], true);
+      }
     }
   }
 

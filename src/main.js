@@ -8,7 +8,7 @@ import {Server} from "./api/server";
 import {Store} from "./api/store";
 import {Provider} from "./api/provider";
 
-const AUTHORIZATION = `Basic <:quA23L)JeP+FL{3`;
+const AUTHORIZATION = `Basic <:quA23L)JeP+FL{4`;
 const END_POINT = `https://13.ecmascript.pages.academy/cinemaddict`;
 
 const body = document.querySelector(`body`);
