@@ -18,10 +18,37 @@ const createGenresTemplate = (genres) => {
   return genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(` `);
 };
 
+const humanizeDate = (date) => {
+  const diff = dayjs().diff(date, `minute`);
+  let humanizedDate = ``;
+  const MIN_MINUTES_FOR_A_FEW_MINUTES_AGO = 10;
+  const MIN_IN_HOUR = 60;
+  const HOUR_IN_DAY = 24;
+  const DAY_IN_MONTH = 30;
+  const MONTH_IN_YEAR = 30;
+
+  if (diff <= MIN_MINUTES_FOR_A_FEW_MINUTES_AGO) {
+    humanizedDate = `now`;
+  } else if (diff > MIN_MINUTES_FOR_A_FEW_MINUTES_AGO && diff < MIN_IN_HOUR) {
+    humanizedDate = `a few minutes ago`;
+  } else if (diff < MIN_IN_HOUR * HOUR_IN_DAY) {
+    humanizedDate = `a few hours ago`;
+  } else if (diff < MIN_IN_HOUR * HOUR_IN_DAY * DAY_IN_MONTH) {
+    humanizedDate = `a few days ago`;
+  } else if (diff < MIN_IN_HOUR * HOUR_IN_DAY * DAY_IN_MONTH * MONTH_IN_YEAR) {
+    humanizedDate = `a few months ago`;
+  } else {
+    humanizedDate = `a few years ago`;
+  }
+
+  return humanizedDate;
+};
+
 const createCommentsTemplate = (comments, isSaving, idDeleting) => {
   comments = comments[0] && comments[0].emotion ? comments : [];
   return comments.map(({emotion, comment, author, date, id}) => {
     const deleteText = id === idDeleting ? `Deleting` : `Delete`;
+    const humanizedDate = humanizeDate(date);
     return `<li class="film-details__comment" data-id="${id}">
               <span class="film-details__comment-emoji">
                 <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
@@ -30,7 +57,7 @@ const createCommentsTemplate = (comments, isSaving, idDeleting) => {
                 <p class="film-details__comment-text">${he.encode(comment)}</p>
                 <p class="film-details__comment-info">
                   <span class="film-details__comment-author">${author}</span>
-                  <span class="film-details__comment-day">${dayjs(date).format(`YYYY/MM/DD HH:mm`)}</span>
+                  <span class="film-details__comment-day">${humanizedDate}</span>
                   <button class="film-details__comment-delete" ${isSaving ? `disabled` : ``}>${deleteText}</button>
                 </p>
               </div>
