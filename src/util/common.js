@@ -9,4 +9,8 @@ const deepCopyFilm = (sourceFilm) => {
   return newFilm;
 };
 
-export {capitalizeString, deepCopyFilm};
+const isOnline = () => {
+  return window.navigator.onLine;
+};
+
+export {capitalizeString, deepCopyFilm, isOnline};

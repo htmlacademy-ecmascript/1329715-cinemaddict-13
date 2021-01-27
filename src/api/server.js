@@ -16,7 +16,9 @@ class Server {
   getFilms() {
     return this._sendRequest({url: `movies`})
       .then(this._toJSON)
-      .then((films) => films.map(FilmsModel.adaptToClient));
+      .then((films) => {
+        return films.map(FilmsModel.adaptToClient);
+      });
   }
 
   getComments(filmId) {
@@ -79,6 +81,16 @@ class Server {
 
   _toJSON(response) {
     return response.json();
+  }
+
+  sync(films) {
+    return this._sendRequest({
+      url: `movies/sync`,
+      method: Method.POST,
+      body: JSON.stringify(films),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then(this._toJSON);
   }
 }
 
