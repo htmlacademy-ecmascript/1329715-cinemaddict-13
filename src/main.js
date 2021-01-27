@@ -32,3 +32,7 @@ server.getFilms()
   .catch(()=>{
     filmsModel.films = [];
   });
+
+window.addEventListener(`load`, () => {
+  navigator.serviceWorker.register(`/sw.js`);
+});
