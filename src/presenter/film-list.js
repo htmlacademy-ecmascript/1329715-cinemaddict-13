@@ -88,8 +88,8 @@ class FilmList {
           .then(() => {
             this._filmsModel.update(updateType, updatedData.film);
           }).catch(() => {
-          this._detailedInfoPopupView.setState(State.ABORTING, updatedData.commentId);
-        });
+            this._detailedInfoPopupView.setState(State.ABORTING, updatedData.commentId);
+          });
         break;
     }
   }
