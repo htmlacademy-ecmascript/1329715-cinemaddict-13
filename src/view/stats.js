@@ -188,7 +188,7 @@ class Stats extends SmartView {
     this._sourceFilms = state;
     this._acvitePeriod = Period.ALL_TIME;
     this.setCharts();
-    this._handlePeriodChange = this._handlePeriodChange.bind(this);
+    this._periodChangeHandler = this._periodChangeHandler.bind(this);
     this.setHandlePeriodChange();
   }
 
@@ -204,13 +204,13 @@ class Stats extends SmartView {
     this.element.classList.remove(`hide`);
   }
 
-  _handlePeriodChange(evt) {
+  _periodChangeHandler(evt) {
     this._acvitePeriod = evt.target.value;
     this.updateState(this._state, true);
   }
 
   setHandlePeriodChange() {
-    this.element.querySelector(`.statistic__filters`).addEventListener(`change`, this._handlePeriodChange);
+    this.element.querySelector(`.statistic__filters`).addEventListener(`change`, this._periodChangeHandler);
   }
 
   restoreHandlers() {

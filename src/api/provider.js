@@ -19,10 +19,9 @@ class Provider {
           this._store.setItems(`films`, films.map(FilmsModel.adaptToServer));
           return films;
         });
-    } else {
-      const storeFilms = this._store.getItems(`films`);
-      return Promise.resolve(storeFilms.map(FilmsModel.adaptToClient));
     }
+    const storeFilms = this._store.getItems(`films`);
+    return Promise.resolve(storeFilms.map(FilmsModel.adaptToClient));
   }
 
   updateFilm(film) {
@@ -32,10 +31,9 @@ class Provider {
           this._store.setItem(`films`, updatedFilm.id, FilmsModel.adaptToServer(updatedFilm));
           return updatedFilm;
         });
-    } else {
-      this._store.setItem(`films`, film.id, FilmsModel.adaptToServer(film));
-      return Promise.resolve(film);
     }
+    this._store.setItem(`films`, film.id, FilmsModel.adaptToServer(film));
+    return Promise.resolve(film);
   }
 
   getComments(filmId) {
