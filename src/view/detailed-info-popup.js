@@ -217,17 +217,17 @@ const EMPTY_COMMENT = {
 };
 
 class DetailedInfoPopup extends SmartView {
-  constructor(film, comments, closePopup, handleViewAction) {
+  constructor(film, comments, closePopup, viewActionHandler) {
     super(film);
     this._comments = comments;
 
     this._closePopup = closePopup;
-    this._handleViewAction = handleViewAction;
+    this._viewActionHandler = viewActionHandler;
 
     this._clickCloseButtonHandler = this._clickCloseButtonHandler.bind(this);
-    this._handleClickWatchlist = this._handleClickWatchlist.bind(this);
-    this._handleClickWatched = this._handleClickWatched.bind(this);
-    this._handleClickFavorite = this._handleClickFavorite.bind(this);
+    this._clickWatchlistHandler = this._clickWatchlistHandler.bind(this);
+    this._clickWatchedHandler = this._clickWatchedHandler.bind(this);
+    this._clickFavoriteHandler = this._clickFavoriteHandler.bind(this);
     this._clickEmojiHandler = this._clickEmojiHandler.bind(this);
     this._clickDeleteButtonHandler = this._clickDeleteButtonHandler.bind(this);
     this._submitCommentHandler = this._submitCommentHandler.bind(this);
@@ -248,34 +248,34 @@ class DetailedInfoPopup extends SmartView {
     this.element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._clickCloseButtonHandler);
   }
 
-  _handleClickWatchlist() {
+  _clickWatchlistHandler() {
     const newFilm = deepCopyFilm(this._state);
     newFilm.userDetails.watchlist = !this._state.userDetails.watchlist;
-    this._handleViewAction(ActionType.USER_INFO, newFilm);
+    this._viewActionHandler(ActionType.USER_INFO, newFilm);
   }
 
   _setClickWatchlistHandler() {
-    this.element.querySelector(`.film-details__control-label--watchlist`).addEventListener(`click`, this._handleClickWatchlist);
+    this.element.querySelector(`.film-details__control-label--watchlist`).addEventListener(`click`, this._clickWatchlistHandler);
   }
 
-  _handleClickWatched() {
+  _clickWatchedHandler() {
     const newFilm = deepCopyFilm(this._state);
     newFilm.userDetails.alreadyWatched = !this._state.userDetails.alreadyWatched;
-    this._handleViewAction(ActionType.USER_INFO, newFilm);
+    this._viewActionHandler(ActionType.USER_INFO, newFilm);
   }
 
   _setClickWatchedHandler() {
-    this.element.querySelector(`.film-details__control-label--watched`).addEventListener(`click`, this._handleClickWatched);
+    this.element.querySelector(`.film-details__control-label--watched`).addEventListener(`click`, this._clickWatchedHandler);
   }
 
-  _handleClickFavorite() {
+  _clickFavoriteHandler() {
     const newFilm = deepCopyFilm(this._state);
     newFilm.userDetails.favorite = !this._state.userDetails.favorite;
-    this._handleViewAction(ActionType.USER_INFO, newFilm);
+    this._viewActionHandler(ActionType.USER_INFO, newFilm);
   }
 
   _setClickFavoriteHandler() {
-    this.element.querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, this._handleClickFavorite);
+    this.element.querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, this._clickFavoriteHandler);
   }
 
   setHandlers() {
@@ -312,7 +312,7 @@ class DetailedInfoPopup extends SmartView {
 
       this._newComment.comment = commentText;
       this._newComment.date = dayjs().toDate();
-      this._handleViewAction(ActionType.COMMENT_ADD, {filmId: this._state.id, comment: this._newComment});
+      this._viewActionHandler(ActionType.COMMENT_ADD, {filmId: this._state.id, comment: this._newComment});
     }
   }
 
@@ -351,7 +351,7 @@ class DetailedInfoPopup extends SmartView {
         return comment === commentId;
       });
       newFilm.comments.splice(indexOfDeletedComment, 1);
-      this._handleViewAction(ActionType.COMMENT_DELETE, {film: newFilm, commentId});
+      this._viewActionHandler(ActionType.COMMENT_DELETE, {film: newFilm, commentId});
     }
   }
 

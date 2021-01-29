@@ -4,49 +4,46 @@ import {deepCopyFilm} from "../util/common";
 import {ButtonType, ActionType} from "../util/const";
 
 class Film {
-  constructor(container, openPopupHandler, handleViewAction, isExtraCategory) {
+  constructor(container, openPopupHandler, viewActionHandler) {
     this._container = container;
     this._openPopupHandler = openPopupHandler;
-    this._handleViewAction = handleViewAction;
-    this.isExtraCategory = isExtraCategory;
+    this._viewActionHandler = viewActionHandler;
 
-    this._handleClickWatchlist = this._handleClickWatchlist.bind(this);
-    this._handleClickWatched = this._handleClickWatched.bind(this);
-    this._handleClickFavorite = this._handleClickFavorite.bind(this);
+    this._clickWatchlistHandler = this._clickWatchlistHandler.bind(this);
+    this._clickWatchedHandler = this._clickWatchedHandler.bind(this);
+    this._clickFavoriteHandler = this._clickFavoriteHandler.bind(this);
   }
 
   init(film) {
     this._film = film;
-
     this._filmCardView = new FilmCardView(this._film);
     this.setHandlers();
-
     render(this._container, this._filmCardView, RENDER_POSITION.BEFORE_END);
   }
 
   setHandlers() {
     this._filmCardView.setOpenPopupHandler(this._openPopupHandler);
-    this._filmCardView.setClickWatchlistHandler(this._handleClickWatchlist);
-    this._filmCardView.setClickWatchedHandler(this._handleClickWatched);
-    this._filmCardView.setClickFavoriteHandler(this._handleClickFavorite);
+    this._filmCardView.setClickWatchlistHandler(this._clickWatchlistHandler);
+    this._filmCardView.setClickWatchedHandler(this._clickWatchedHandler);
+    this._filmCardView.setClickFavoriteHandler(this._clickFavoriteHandler);
   }
 
-  _handleClickWatchlist() {
+  _clickWatchlistHandler() {
     const newFilm = deepCopyFilm(this._film);
     newFilm.userDetails.watchlist = !this._film.userDetails.watchlist;
-    this._handleViewAction(ActionType.USER_INFO, newFilm);
+    this._viewActionHandler(ActionType.USER_INFO, newFilm);
   }
 
-  _handleClickWatched() {
+  _clickWatchedHandler() {
     const newFilm = deepCopyFilm(this._film);
     newFilm.userDetails.alreadyWatched = !this._film.userDetails.alreadyWatched;
-    this._handleViewAction(ActionType.USER_INFO, newFilm);
+    this._viewActionHandler(ActionType.USER_INFO, newFilm);
   }
 
-  _handleClickFavorite() {
+  _clickFavoriteHandler() {
     const newFilm = deepCopyFilm(this._film);
     newFilm.userDetails.favorite = !this._film.userDetails.favorite;
-    this._handleViewAction(ActionType.USER_INFO, newFilm);
+    this._viewActionHandler(ActionType.USER_INFO, newFilm);
   }
 
   update(newFilm, isReload) {

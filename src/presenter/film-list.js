@@ -29,18 +29,18 @@ class FilmList {
     this._server = server;
 
     this._closePopup = this._closePopup.bind(this);
-    this._onEscKeydown = this._onEscKeydown.bind(this);
+    this._escKeydownHandler = this._escKeydownHandler.bind(this);
     this._clickShowMoreButtonHandler = this._clickShowMoreButtonHandler.bind(this);
     this._openPopup = this._openPopup.bind(this);
 
     this._filmPresenters = new Map();
 
-    this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
-    this._handleModelEvent = this._handleModelEvent.bind(this);
-    this._handleViewAction = this._handleViewAction.bind(this);
+    this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
+    this._modelEventHandler = this._modelEventHandler.bind(this);
+    this._viewActionHandler = this._viewActionHandler.bind(this);
 
-    this._filmsModel.addObserver(this._handleModelEvent);
-    this._menuItemsModel.addObserver(this._handleModelEvent);
+    this._filmsModel.addObserver(this._modelEventHandler);
+    this._menuItemsModel.addObserver(this._modelEventHandler);
 
     this._statsView = statsView;
     this._isLoading = true;
@@ -59,13 +59,13 @@ class FilmList {
     return sort[this._currentSortType](filteredFilms);
   }
 
-  _handleSortTypeChange(sortType) {
+  _sortTypeChangeHandler(sortType) {
     this._currentSortType = sortType;
     this._clearFilmList();
     this._renderFilmList();
   }
 
-  _handleViewAction(updateType, updatedData) {
+  _viewActionHandler(updateType, updatedData) {
     switch (updateType) {
       case ActionType.USER_INFO:
         this._server.updateFilm(updatedData)
@@ -94,7 +94,7 @@ class FilmList {
     }
   }
 
-  _handleModelEvent(updateType, updatedFilm, comments) {
+  _modelEventHandler(updateType, updatedFilm, comments) {
     let scrollY;
     switch (updateType) {
       case ActionType.INIT:
@@ -232,7 +232,7 @@ class FilmList {
     }
     this._sortView = new SortView(this._currentSortType);
     render(this._body.querySelector(`.main-navigation`), this._sortView, RENDER_POSITION.AFTER_END);
-    this._sortView.setClickSortHandler(this._handleSortTypeChange);
+    this._sortView.setClickSortHandler(this._sortTypeChangeHandler);
   }
 
   _renderFilmContainer() {
@@ -240,8 +240,8 @@ class FilmList {
     render(this._container, this._filmContainerView, RENDER_POSITION.AFTER_BEGIN);
   }
 
-  _renderFilm(container, film, isExtraCategory = false) {
-    const filmPresenter = new FilmPresenter(container, this._openPopup, this._handleViewAction, isExtraCategory);
+  _renderFilm(container, film) {
+    const filmPresenter = new FilmPresenter(container, this._openPopup, this._viewActionHandler);
     filmPresenter.init(film);
     const filmPresenters = this._filmPresenters.get(film.id);
     if (filmPresenters) {
@@ -286,7 +286,7 @@ class FilmList {
       const topRatedContainer = topRatedViewElement.querySelector(`.films-list__container`);
       const rateQuantity = Math.min(FILM_QUANTITY_EXTRA, sortByRateFilms.length);
       for (let i = 0; i < rateQuantity; i++) {
-        this._renderFilm(topRatedContainer, sortByRateFilms[i], true);
+        this._renderFilm(topRatedContainer, sortByRateFilms[i]);
       }
     }
   }
@@ -303,7 +303,7 @@ class FilmList {
       const mostCommentedContainer = mostCommentedViewElement.querySelector(`.films-list__container`);
       const commentedQuantity = Math.min(FILM_QUANTITY_EXTRA, sortByCommentedFilms.length);
       for (let i = 0; i < commentedQuantity; i++) {
-        this._renderFilm(mostCommentedContainer, sortByCommentedFilms[i], true);
+        this._renderFilm(mostCommentedContainer, sortByCommentedFilms[i]);
       }
     }
   }
@@ -323,10 +323,10 @@ class FilmList {
       this._detailedInfoPopupView = null;
       this._openPopupFilmId = null;
     }
-    document.removeEventListener(`keydown`, this._onEscKeydown);
+    document.removeEventListener(`keydown`, this._escKeydownHandler);
   }
 
-  _onEscKeydown(evt) {
+  _escKeydownHandler(evt) {
     if (evt.key === `Escape`) {
       evt.preventDefault();
       this._closePopup();
@@ -349,8 +349,8 @@ class FilmList {
         filmComments = film.comments;
       })
       .then(() => {
-        this._detailedInfoPopupView = new DetailedInfoPopupView(film, filmComments, this._closePopup, this._handleViewAction);
-        document.addEventListener(`keydown`, this._onEscKeydown);
+        this._detailedInfoPopupView = new DetailedInfoPopupView(film, filmComments, this._closePopup, this._viewActionHandler);
+        document.addEventListener(`keydown`, this._escKeydownHandler);
 
         render(this._footer, this._detailedInfoPopupView, RENDER_POSITION.AFTER_END);
         this._detailedInfoPopupView.init();
